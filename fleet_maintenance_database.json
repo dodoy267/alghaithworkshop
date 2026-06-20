@@ -1,0 +1,446 @@
+{
+  "master_assets_registry": {
+    "B1": {
+      "name": "HP Pump",
+      "serial": "U 409070-4",
+      "model": "NLB1012D"
+    },
+    "B2": {
+      "name": "HP Pump",
+      "serial": "10750707",
+      "model": "WOMA"
+    },
+    "B3": {
+      "name": "HP Pump",
+      "serial": "6270707",
+      "model": "WOMA"
+    },
+    "B4": {
+      "name": "HP Pump",
+      "serial": "U 018210-2",
+      "model": "NLB20305FDB"
+    },
+    "B5": {
+      "name": "HP Pump",
+      "serial": "U 902260-1",
+      "model": "NLB20305FDB"
+    },
+    "B6": {
+      "name": "HP Pump",
+      "serial": "U 601170-2",
+      "model": "NLB20275FDB"
+    },
+    "B7": {
+      "name": "HP Pump",
+      "serial": "U 017210-1",
+      "model": "NLB20305FDB"
+    },
+    "B8": {
+      "name": "HP Pump",
+      "serial": "U 905150-1A",
+      "model": "NLB20235DB"
+    },
+    "B9": {
+      "name": "HP Pump",
+      "serial": "U 211230-1",
+      "model": "NLB20305FDB"
+    },
+    "B10": {
+      "name": "HP Pump",
+      "serial": "U 211230-2",
+      "model": "NLB20305FDB"
+    },
+    "B11": {
+      "name": "HP Pump",
+      "serial": "U 210110-2",
+      "model": "NLB20305FDB"
+    },
+    "B12": {
+      "name": "HP Pump",
+      "serial": "U 212140-1",
+      "model": "NLB20305FDB"
+    },
+    "B13": {
+      "name": "HP Pump",
+      "serial": "U 212140-2",
+      "model": "NLB20305FDB"
+    },
+    "B14": {
+      "name": "HP Pump",
+      "serial": "U 213230-1",
+      "model": "NLB20305FDB"
+    },
+    "B15": {
+      "name": "HP Pump",
+      "serial": "U 212110-2",
+      "model": "NLB20305FDB"
+    },
+    "B16": {
+      "name": "HP Pump",
+      "serial": "U 212230-3",
+      "model": "NLB20305FDB"
+    },
+    "B17": {
+      "name": "HP Pump",
+      "serial": "U 013110-2",
+      "model": "NLB40201D"
+    },
+    "B18": {
+      "name": "HP Pump",
+      "serial": "U 503101-1",
+      "model": "NLB40201D"
+    },
+    "B19": {
+      "name": "HP Pump",
+      "serial": "U 503101-3",
+      "model": "NLB40201D"
+    },
+    "B20": {
+      "name": "HP Pump",
+      "serial": "U 506160-1",
+      "model": "NLB40201D"
+    },
+    "B21": {
+      "name": "HP Pump",
+      "serial": "U 508001-3",
+      "model": "NLB40201D"
+    },
+    "B22": {
+      "name": "HP Pump",
+      "serial": "U 217140-1",
+      "model": "NLB40305FDB"
+    },
+    "B23": {
+      "name": "HP Pump",
+      "serial": "U 217140-2",
+      "model": "NLB40305FDB"
+    },
+    "B24": {
+      "name": "HP Pump",
+      "serial": "U 214250-1",
+      "model": "NLB40305FDB"
+    },
+    "B25": {
+      "name": "HP Pump",
+      "serial": "U 214250-2",
+      "model": "NLB40305FDB"
+    },
+    "BP2": {
+      "name": "Bundle Puller",
+      "model": "45Tone ./Remote",
+      "serial": "IK 30122019"
+    },
+    "BP1": {
+      "name": "Bundle Puller",
+      "model": "45Tone ./Remote",
+      "serial": "KE 103106"
+    },
+    "BP3": {
+      "name": "Bundle Extractor /Lifter 25T",
+      "model": "6100 x 2000E",
+      "serial": "N1734-23"
+    },
+    "BP4": {
+      "name": "Bundle Extractor /Lifter 45T",
+      "model": "9000 x 2000EL",
+      "serial": "N1783-23"
+    },
+    "ALG-DW-05": {
+      "name": "Dewatering Pump",
+      "model": "OP 150/70",
+      "serial": "20183"
+    },
+    "TC1": {
+      "name": "Torpedo Compact",
+      "model": "TORPEDO COMPACT 23/350",
+      "serial": "AM4000062-2024-P24036109"
+    },
+    "B31": {
+      "name": "HP Pump",
+      "model": "NLB40305FDB",
+      "serial": "U 214060-2"
+    }
+  },
+  "global_status_store": {
+    "B6": "Operational",
+    "B13": "Operational",
+    "B12": "Operational",
+    "B9": "Operational",
+    "B11": "Operational",
+    "B8": "Operational",
+    "B10": "Operational",
+    "B21": "Operational",
+    "B22": "Operational",
+    "B23": "Operational",
+    "B24": "Operational",
+    "B25": "Under Maintenance",
+    "BP2": "Operational",
+    "BP1": "Operational",
+    "BP3": "Operational",
+    "BP4": "Operational",
+    "ALG-DW-05": "Operational",
+    "B5": "Under Maintenance",
+    "B1": "Operational",
+    "TC1": "Operational",
+    "B31": "Under Maintenance"
+  },
+  "historical_logs_store": {
+    "B6": [
+      {
+        "date": "2026-06-08",
+        "status": "Under Maintenance",
+        "currentHours": "3518.0",
+        "targetMaintenanceHours": "3450.0",
+        "faultReport": "alternator not charging, need change oil and filters",
+        "serviceAction": "none",
+        "partsReplaced": "none",
+        "technician": "Benson",
+        "remarks": "waiting for alternator to be repaired",
+        "checklist": {
+          "fluids": false,
+          "filters": false,
+          "belts": false,
+          "torque": false,
+          "gauges": false
+        }
+      },
+      {
+        "date": "2026-06-11",
+        "status": "Operational",
+        "currentHours": "3518.0",
+        "targetMaintenanceHours": "3768.0",
+        "faultReport": "Alternator not charging and udergo for servicing",
+        "serviceAction": "repair alternator and fixed. chaned oil and filters, complete check-up and test run.",
+        "partsReplaced": "1 recond alternator, 16 ltrs oil, 1 oil filter, 2 fuel filter",
+        "technician": "Benson",
+        "remarks": "ok-ready to use",
+        "checklist": {
+          "fluids": false,
+          "filters": false,
+          "belts": false,
+          "torque": false,
+          "gauges": false
+        }
+      }
+    ],
+    "B13": [
+      {
+        "date": "2026-06-08",
+        "status": "Under Maintenance",
+        "currentHours": "2726.0",
+        "targetMaintenanceHours": "2950.0",
+        "faultReport": "cam shaft censor loose connection",
+        "serviceAction": "None",
+        "partsReplaced": "None",
+        "technician": "Benson",
+        "remarks": "for repair",
+        "checklist": {
+          "fluids": false,
+          "filters": false,
+          "belts": false,
+          "torque": false,
+          "gauges": false
+        }
+      },
+      {
+        "date": "2026-06-10",
+        "status": "Operational",
+        "currentHours": "2726.0",
+        "targetMaintenanceHours": "2950.0",
+        "faultReport": "cam shaft censor loose connection",
+        "serviceAction": "cam shaft censor repaired\nCompleted regular preventive routines: Fluid Levels Check, Filters/Separators Maintenance, Hose/Seals/Belt Integrity Review, Structural Fastener Torque Verification, Gauge Calibration Certification.",
+        "partsReplaced": "None",
+        "technician": "Benson",
+        "remarks": "Test Run OK",
+        "checklist": {
+          "fluids": true,
+          "filters": true,
+          "belts": true,
+          "torque": true,
+          "gauges": true
+        }
+      }
+    ],
+    "B12": [
+      {
+        "date": "2026-06-10",
+        "status": "Operational",
+        "currentHours": "2464.0",
+        "targetMaintenanceHours": "2545.0",
+        "faultReport": "No fault found",
+        "serviceAction": "Completed regular preventive routines: Fluid Levels Check, Filters/Separators Maintenance, Hose/Seals/Belt Integrity Review, Structural Fastener Torque Verification, Gauge Calibration Certification.",
+        "partsReplaced": "None",
+        "technician": "Jeremy/Khadka",
+        "remarks": "Test Run OK",
+        "checklist": {
+          "fluids": true,
+          "filters": true,
+          "belts": true,
+          "torque": true,
+          "gauges": true
+        }
+      }
+    ],
+    "B9": [
+      {
+        "date": "2026-06-10",
+        "status": "Operational",
+        "currentHours": "3547.0",
+        "targetMaintenanceHours": "3797.0",
+        "faultReport": "need change oil and filters",
+        "serviceAction": "Changed oil and filters completed",
+        "partsReplaced": "44 ltrs engine oil, 1 oil filter, 2 fuel filter, 1 air filter, water filter",
+        "technician": "Jeremy",
+        "remarks": "Complete Check up and Test run OK",
+        "checklist": {
+          "fluids": false,
+          "filters": false,
+          "belts": false,
+          "torque": false,
+          "gauges": false
+        }
+      }
+    ],
+    "B11": [
+      {
+        "date": "2026-06-10",
+        "status": "Operational",
+        "currentHours": "3234.0",
+        "targetMaintenanceHours": "3315.0",
+        "faultReport": "No fault found",
+        "serviceAction": "Completed regular preventive routines: Fluid Levels Check, Filters/Separators Maintenance, Hose/Seals/Belt Integrity Review, Structural Fastener Torque Verification, Gauge Calibration Certification.",
+        "partsReplaced": "None",
+        "technician": "Jeremy/Khadka",
+        "remarks": "Test Run OK",
+        "checklist": {
+          "fluids": true,
+          "filters": true,
+          "belts": true,
+          "torque": true,
+          "gauges": true
+        }
+      }
+    ],
+    "B8": [
+      {
+        "date": "2026-06-10",
+        "status": "Operational",
+        "currentHours": "3175.0",
+        "targetMaintenanceHours": "3278.0",
+        "faultReport": "No fault found",
+        "serviceAction": "Completed regular preventive routines: Fluid Levels Check, Filters/Separators Maintenance, Hose/Seals/Belt Integrity Review, Structural Fastener Torque Verification, Gauge Calibration Certification.",
+        "partsReplaced": "None",
+        "technician": "Jeremy/Khadka",
+        "remarks": "Test Run OK",
+        "checklist": {
+          "fluids": true,
+          "filters": true,
+          "belts": true,
+          "torque": true,
+          "gauges": true
+        }
+      }
+    ],
+    "B10": [
+      {
+        "date": "2026-06-10",
+        "status": "Operational",
+        "currentHours": "3264.0",
+        "targetMaintenanceHours": "3415.0",
+        "faultReport": "No fault found",
+        "serviceAction": "Completed regular preventive routines: Fluid Levels Check, Filters/Separators Maintenance, Hose/Seals/Belt Integrity Review, Structural Fastener Torque Verification, Gauge Calibration Certification.",
+        "partsReplaced": "None",
+        "technician": "Jeremy&Khadka",
+        "remarks": "Test Run OK",
+        "checklist": {
+          "fluids": true,
+          "filters": true,
+          "belts": true,
+          "torque": true,
+          "gauges": true
+        }
+      }
+    ],
+    "B5": [
+      {
+        "date": "2026-06-13",
+        "status": "Under Maintenance",
+        "currentHours": "3479.0",
+        "targetMaintenanceHours": "3670.0",
+        "faultReport": "",
+        "serviceAction": "",
+        "partsReplaced": "",
+        "technician": "khadka",
+        "remarks": "",
+        "checklist": {
+          "fluids": false,
+          "filters": false,
+          "belts": false,
+          "torque": false,
+          "gauges": false
+        }
+      }
+    ],
+    "B25": [
+      {
+        "date": "2026-06-13",
+        "status": "Under Maintenance",
+        "currentHours": "2739.0",
+        "targetMaintenanceHours": "2983.0",
+        "faultReport": "",
+        "serviceAction": "",
+        "partsReplaced": "",
+        "technician": "khadka",
+        "remarks": "for check up",
+        "checklist": {
+          "fluids": false,
+          "filters": false,
+          "belts": false,
+          "torque": false,
+          "gauges": false
+        }
+      }
+    ],
+    "B1": [],
+    "TC1": [
+      {
+        "date": "2026-06-16",
+        "status": "Operational",
+        "currentHours": "55.0",
+        "targetMaintenanceHours": "300.0",
+        "faultReport": "NONE",
+        "serviceAction": "Completed regular preventive routines: Fluid Levels Check, Filters/Separators Maintenance, Hose/Seals/Belt Integrity Review, Structural Fastener Torque Verification.",
+        "partsReplaced": "NONE",
+        "technician": "YOUBRAJ",
+        "remarks": "Ready to use",
+        "checklist": {
+          "fluids": true,
+          "filters": true,
+          "belts": true,
+          "torque": true,
+          "gauges": false
+        }
+      }
+    ],
+    "B31": [
+      {
+        "date": "2026-06-17",
+        "status": "Under Maintenance",
+        "currentHours": "3679.0",
+        "targetMaintenanceHours": "3917.0",
+        "faultReport": "",
+        "serviceAction": "",
+        "partsReplaced": "",
+        "technician": "Jeremy",
+        "remarks": "for check up",
+        "checklist": {
+          "fluids": false,
+          "filters": false,
+          "belts": false,
+          "torque": false,
+          "gauges": false
+        }
+      }
+    ]
+  }
+}
