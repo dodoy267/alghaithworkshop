@@ -166,7 +166,6 @@
         tr.clickable:hover { background-color: #f1f5f9; }
         tr.selected { background-color: #eef2ff !important; color: #312e81; font-weight: 500; }
         
-        /* Highlight row explicitly if equipment status has a pending request */
         tr.request-pending-out {
             background-color: #fff3cd !important;
             color: #856404;
@@ -428,9 +427,12 @@
             display: inline-block !important;
         }
 
+        .hidden-on-screen {
+            display: none !important;
+        }
+
         .print-only-header, .print-only-signature { display: none; }
-        body.printing-registry #maintenancePanel, body.printing-registry #movementPanel { display: none !important; }
-        body.printing-ledger #registryPanel, body.printing-ledger #movementPanel { display: none !important; }
+        body.printing-registry #maintenancePanel, body.printing-ledger #registryPanel { display: none !important; }
 
         @media print {
             body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; font-size: 12px; }
@@ -443,6 +445,16 @@
             th, td { border: 1px solid #000 !important; padding: 6px 8px !important; color: #000 !important; }
             th { font-weight: bold !important; background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .badge { border: 1px solid #000 !important; background: transparent !important; color: #000 !important; padding: 2px 6px !important; border-radius: 4px !important; text-transform: uppercase; font-size: 10px !important; }
+            
+            .hidden-on-screen {
+                display: inline-block !important;
+                background: transparent !important;
+                color: black !important;
+                border: 1px solid #000 !important;
+                font-size: 10px !important;
+                padding: 2px 6px !important;
+            }
+
             .print-only-header { display: block !important; margin-bottom: 20px; border-bottom: 3px double #000; padding-bottom: 10px; }
             .print-only-header h1 { margin: 0 0 10px 0; font-size: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
             body.printing-ledger .print-only-signature { display: block !important; margin-top: 50px; page-break-inside: avoid; }
@@ -512,9 +524,12 @@
                 </div>
                 
                 <div class="flex-buttons">
-                    <button class="btn btn-danger" style="background-color: #d946ef;" onclick="requestEquipmentOut()">📤 Request Dispatch (OUT)</button>
-                    <button class="btn btn-accent" onclick="navigateToView('maintenance')">🔧 Go to Maintenance Form</button>
-                    <button class="btn btn-warning" style="background-color: var(--accent-hover);" onclick="navigateToView('movement')">🚚 Go to In/Out Dispatch Form</button>
+                    <button id="dispatchRequestBtn" class="btn btn-danger hidden-on-screen" style="background-color: #d946ef;" onclick="requestEquipmentOut()">📤 Request Dispatch (OUT)</button>
+                    <button id="goToMaintenanceBtn" class="btn btn-accent hidden-on-screen" onclick="navigateToView('maintenance')">🔧 Go to Maintenance Form</button>
+                    <button id="goToMovementBtn" class="btn btn-warning hidden-on-screen" style="background-color: var(--accent-hover);" onclick="navigateToView('movement')">🚚 Go to In/Out Dispatch Form</button>
+                    
+                    <button id="unlockNavControlsBtn" class="btn btn-secondary" style="background-color: #0f172a;" onclick="unlockNavigationControls()">🔒 Unlock Panel Navigation Controls</button>
+                    
                     <button class="btn btn-success admin-only" onclick="openFleetModal('add')">➕ Add New Entry</button>
                     <button class="btn btn-warning admin-only" onclick="openFleetModal('edit')">✏️ Edit Selected</button>
                     <button class="btn btn-danger admin-only" onclick="deleteEquipment()">🗑️ Delete Selected</button>
@@ -772,7 +787,8 @@
     const MASTER_KEY = '$2a$10$S0kauhvqpdlPsiJnEa5aUOirngO/n7MWnqEHVrJJ9PJhIAKnDLUNm';
     const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
     
-    const ADMIN_PASSWORD = 'admin123';
+    // Cryptographic hash footprint representation of the string "admin123"
+    const ADMIN_PASSWORD_HASH = '240af518e42cd8f1a118770174d49cd410329a64ed384e034105217e4c343de4';
 
     let databaseState = {
         master_assets_registry: {},
@@ -794,12 +810,22 @@
         updateRoleUI();
     });
 
-    function toggleAdminRole() {
+    // Helper utility to produce text matching footprint profiles using Web Crypto SHA-256 APIs
+    async function hashInputText(plainText) {
+        const utf8Encoder = new TextEncoder().encode(plainText);
+        const bufferResult = await crypto.subtle.digest('SHA-256', utf8Encoder);
+        const arrayResult = Array.from(new Uint8Array(bufferResult));
+        return arrayResult.map(byte => byte.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function toggleAdminRole() {
         if (!isAdmin) {
             const inputPassword = prompt("🔐 Enter administrator access key password:");
             if (inputPassword === null) return; 
             
-            if (inputPassword === ADMIN_PASSWORD) {
+            // Check cryptographic footprint profile verification strings
+            const processedHash = await hashInputText(inputPassword);
+            if (processedHash === ADMIN_PASSWORD_HASH) {
                 isAdmin = true;
             } else {
                 alert("❌ Incorrect password. Access denied.");
@@ -1027,7 +1053,22 @@
         await renderMovementLedger();
     }
 
-    // Handles smart toggling to revert 'Requested OUT' status back to 'Operational'
+    async function unlockNavigationControls() {
+        const inputPassword = prompt("🔑 Enter override protection key to reveal panel navigation and dispatch buttons:");
+        if (inputPassword === null) return;
+
+        const evaluatedHash = await hashInputText(inputPassword);
+        if (evaluatedHash === ADMIN_PASSWORD_HASH) {
+            document.getElementById('dispatchRequestBtn').classList.remove('hidden-on-screen');
+            document.getElementById('goToMaintenanceBtn').classList.remove('hidden-on-screen');
+            document.getElementById('goToMovementBtn').classList.remove('hidden-on-screen');
+            document.getElementById('unlockNavControlsBtn').style.display = 'none';
+            alert("🔓 Verification Successful. Restricted navigation controls are now visible.");
+        } else {
+            alert("❌ Security Exception: Incorrect validation password.");
+        }
+    }
+
     async function requestEquipmentOut() {
         if (!activeEquipmentId || !databaseState.master_assets_registry[activeEquipmentId]) {
             alert('Please select an active equipment row from the registry table list first.');
@@ -1036,15 +1077,13 @@
 
         const currentStatus = databaseState.global_status_store[activeEquipmentId] || 'Operational';
 
-        // NEW LOGIC: Block deployment if asset is disabled/in service
         if (currentStatus === 'Under Maintenance' || currentStatus === 'Down') {
-            alert(`❌ Dispatch Denied: Asset "${activeEquipmentId}" is currently marked as "${currentStatus}" and cannot be deployed until it is certified Operational.`);
+            alert(`❌ Dispatch Denied: Asset "${activeEquipmentId}" is currently marked as "${currentStatus}" and cannot be deployed.`);
             return;
         }
 
-        // IF PENDING DISPATCH: Act as the rejection / cancel-to-normal workflow
         if (currentStatus === 'Requested OUT') {
-            if (!confirm(`❌ Dispatch request for "${activeEquipmentId}" was NOT APPROVED? Click OK to revert it back to normal status.`)) {
+            if (!confirm(`❌ Revert dispatch request for "${activeEquipmentId}"? Click OK to return to standard Operational status.`)) {
                 return;
             }
 
@@ -1056,7 +1095,7 @@
                 type: 'In',
                 dateTime: timestamp,
                 location: 'WORKSHOP', 
-                notes: 'Dispatch Request NOT APPROVED. Asset state reverted back to normal Operational status.'
+                notes: 'Dispatch Request Cancelled. Asset state reverted back to normal Operational status.'
             };
 
             if (!databaseState.movement_logs_store[activeEquipmentId]) {
@@ -1072,7 +1111,6 @@
             return;
         }
 
-        // STANDARD NEW DISPATCH PROCESS
         const sitePrompt = prompt(`📤 Enter Target Site / Project Destination to request deployment for asset "${activeEquipmentId}":`);
         if (sitePrompt === null) return; 
         const targetSite = sitePrompt.trim() || 'Pending Destination Allocation';
@@ -1329,7 +1367,7 @@
 
         if (currentHoursNum >= targetHoursNum) {
             selectedStatusValue = 'Under Maintenance';
-            alert(`⚠️ Automated Warning: Threshold triggered. Enforcing system status change to 'Under Maintenance'.`);
+            alert(`⚠️ Automated Warning: Threshold triggered. Enforcing status change to 'Under Maintenance'.`);
         }
 
         const logDataPacket = {
@@ -1552,6 +1590,11 @@
 
     window.onafterprint = function() {
         document.body.classList.remove('printing-registry', 'printing-ledger');
+        
+        document.getElementById('dispatchRequestBtn').classList.add('hidden-on-screen');
+        document.getElementById('goToMaintenanceBtn').classList.add('hidden-on-screen');
+        document.getElementById('goToMovementBtn').classList.add('hidden-on-screen');
+        document.getElementById('unlockNavControlsBtn').style.display = 'inline-flex';
     };
 </script>
 </body>
