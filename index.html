@@ -165,6 +165,12 @@
         tr.clickable { cursor: pointer; transition: background 0.15s ease; }
         tr.clickable:hover { background-color: #f1f5f9; }
         tr.selected { background-color: #eef2ff !important; color: #312e81; font-weight: 500; }
+        
+        /* Highlight row explicitly if equipment status has a pending request */
+        tr.request-pending-out {
+            background-color: #fff3cd !important;
+            color: #856404;
+        }
 
         .form-group {
             margin-bottom: 20px;
@@ -328,6 +334,7 @@
         
         .badge-move-in { background-color: #e0f2fe; color: #0369a1; }
         .badge-move-out { background-color: #fae8ff; color: #a21caf; }
+        .badge-requested-out { background-color: #fff3cd; color: #856404; border: 1px dashed #ffeeba; }
 
         .flex-buttons {
             display: flex;
@@ -411,7 +418,6 @@
             line-height: 1.6;
         }
 
-        /* Helper class for dynamic admin view control */
         .admin-only {
             display: none !important;
         }
@@ -451,7 +457,7 @@
     <div class="container">
         <header>
             <div>
-                <h1>🛠️ Equipment Maintenance & Dispatch Log</h1>
+                <h1>🛠️ MAINTENANCE MANAGEMENT SYSTEM</h1>
                 <p>Online Asset Logbook, Fleet Status Tracking & Service History Records</p>
             </div>
             <div class="header-actions">
@@ -506,6 +512,7 @@
                 </div>
                 
                 <div class="flex-buttons">
+                    <button class="btn btn-danger" style="background-color: #d946ef;" onclick="requestEquipmentOut()">📤 Request Dispatch (OUT)</button>
                     <button class="btn btn-accent" onclick="navigateToView('maintenance')">🔧 Go to Maintenance Form</button>
                     <button class="btn btn-warning" style="background-color: var(--accent-hover);" onclick="navigateToView('movement')">🚚 Go to In/Out Dispatch Form</button>
                     <button class="btn btn-success admin-only" onclick="openFleetModal('add')">➕ Add New Entry</button>
@@ -548,6 +555,7 @@
                                 <option value="Operational">Operational</option>
                                 <option value="Under Maintenance">Under Maintenance</option>
                                 <option value="Down">Down</option>
+                                <option value="Requested OUT">Requested OUT</option>
                             </select>
                         </div>
                     </div>
@@ -669,14 +677,14 @@
             </div>
 
             <div class="card">
-                <h2>📦 Record Equipment In / Out Logic</h2>
+                <h2>📦 Record Equipment In / Out Logic & Dispatch Request</h2>
                 <form id="movementForm" onsubmit="saveMovementLog(event)">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                         <div class="form-group">
-                            <label>Movement Type</label>
+                            <label>Movement Type / Request State</label>
                             <select id="moveType" required>
-                                <option value="In">➡️ Equipment IN (Returned to Yard/Site)</option>
                                 <option value="Out">⬅️ Equipment OUT (Dispatched to Site)</option>
+                                <option value="In">➡️ Equipment IN (Returned to Yard/Site)</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -691,12 +699,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Movement Notes / Purpose</label>
-                        <textarea id="moveNotes" placeholder="Reason for asset dispatch, assignment instructions, etc."></textarea>
+                        <label>Movement Notes / Dispatch Assignment Details</label>
+                        <textarea id="moveNotes" placeholder="Reason for asset dispatch, operation scopes, assignment instructions, etc."></textarea>
                     </div>
 
                     <div class="flex-buttons">
-                        <button type="submit" class="btn btn-accent" style="background-color: var(--accent-hover);">Save Movement Dispatch Record</button>
+                        <button type="submit" class="btn btn-accent" style="background-color: var(--accent-hover);">Confirm & Save Dispatch Record</button>
                     </div>
                 </form>
             </div>
@@ -749,7 +757,7 @@
         </div>
         <div class="form-group">
             <label>Location / Site</label>
-            <input type="text" id="modalAssetLocation" placeholder="e.g., Main Yard / Site Project" required>
+            <input type="text" id="modalAssetLocation" placeholder="e.g., WORKSHOP / Site Project" required>
         </div>
         
         <div class="flex-buttons" style="justify-content: flex-end; margin-top: 24px;">
@@ -764,7 +772,6 @@
     const MASTER_KEY = '$2a$10$S0kauhvqpdlPsiJnEa5aUOirngO/n7MWnqEHVrJJ9PJhIAKnDLUNm';
     const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
     
-    // Configurable Admin View Password
     const ADMIN_PASSWORD = 'admin123';
 
     let databaseState = {
@@ -790,7 +797,7 @@
     function toggleAdminRole() {
         if (!isAdmin) {
             const inputPassword = prompt("🔐 Enter administrator access key password:");
-            if (inputPassword === null) return; // User canceled the dialog
+            if (inputPassword === null) return; 
             
             if (inputPassword === ADMIN_PASSWORD) {
                 isAdmin = true;
@@ -799,7 +806,6 @@
                 return;
             }
         } else {
-            // Drop admin credentials seamlessly when leaving admin mode
             isAdmin = false;
         }
         updateRoleUI();
@@ -945,11 +951,18 @@
         for (const id of keys) {
             const savedStatus = databaseState.global_status_store[id] || 'Operational';
             let badgeClass = 'badge-operational';
+            let rowHighlightClass = '';
+
             if (savedStatus === 'Under Maintenance') badgeClass = 'badge-maintenance';
             if (savedStatus === 'Down') badgeClass = 'badge-down';
+            
+            if (savedStatus === 'Requested OUT') {
+                badgeClass = 'badge-requested-out';
+                rowHighlightClass = 'request-pending-out';
+            }
 
             const tr = document.createElement('tr');
-            tr.className = `clickable ${id === activeEquipmentId ? 'selected' : ''}`;
+            tr.className = `clickable ${id === activeEquipmentId ? 'selected' : ''} ${rowHighlightClass}`;
             tr.onclick = () => selectEquipment(id);
             
             tr.innerHTML = `
@@ -1012,6 +1025,79 @@
 
         await renderHistoryLedger();
         await renderMovementLedger();
+    }
+
+    // Handles smart toggling to revert 'Requested OUT' status back to 'Operational'
+    async function requestEquipmentOut() {
+        if (!activeEquipmentId || !databaseState.master_assets_registry[activeEquipmentId]) {
+            alert('Please select an active equipment row from the registry table list first.');
+            return;
+        }
+
+        const currentStatus = databaseState.global_status_store[activeEquipmentId] || 'Operational';
+
+        // NEW LOGIC: Block deployment if asset is disabled/in service
+        if (currentStatus === 'Under Maintenance' || currentStatus === 'Down') {
+            alert(`❌ Dispatch Denied: Asset "${activeEquipmentId}" is currently marked as "${currentStatus}" and cannot be deployed until it is certified Operational.`);
+            return;
+        }
+
+        // IF PENDING DISPATCH: Act as the rejection / cancel-to-normal workflow
+        if (currentStatus === 'Requested OUT') {
+            if (!confirm(`❌ Dispatch request for "${activeEquipmentId}" was NOT APPROVED? Click OK to revert it back to normal status.`)) {
+                return;
+            }
+
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            const timestamp = now.toISOString().slice(0, 16);
+
+            const cancelPacket = {
+                type: 'In',
+                dateTime: timestamp,
+                location: 'WORKSHOP', 
+                notes: 'Dispatch Request NOT APPROVED. Asset state reverted back to normal Operational status.'
+            };
+
+            if (!databaseState.movement_logs_store[activeEquipmentId]) {
+                databaseState.movement_logs_store[activeEquipmentId] = [];
+            }
+
+            databaseState.movement_logs_store[activeEquipmentId].push(cancelPacket);
+            databaseState.global_status_store[activeEquipmentId] = 'Operational';
+            databaseState.master_assets_registry[activeEquipmentId].location = 'WORKSHOP';
+
+            await selectEquipment(activeEquipmentId);
+            await autoSaveToDisk();
+            return;
+        }
+
+        // STANDARD NEW DISPATCH PROCESS
+        const sitePrompt = prompt(`📤 Enter Target Site / Project Destination to request deployment for asset "${activeEquipmentId}":`);
+        if (sitePrompt === null) return; 
+        const targetSite = sitePrompt.trim() || 'Pending Destination Allocation';
+
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        const timestamp = now.toISOString().slice(0, 16);
+
+        const requestPacket = {
+            type: 'Out',
+            dateTime: timestamp,
+            location: 'Requested OUT',
+            notes: `Automated Dispatch Request generated. Assigned target location destination field value: ${targetSite}.`
+        };
+
+        if (!databaseState.movement_logs_store[activeEquipmentId]) {
+            databaseState.movement_logs_store[activeEquipmentId] = [];
+        }
+
+        databaseState.movement_logs_store[activeEquipmentId].push(requestPacket);
+        databaseState.global_status_store[activeEquipmentId] = 'Requested OUT';
+        databaseState.master_assets_registry[activeEquipmentId].location = 'Requested OUT';
+
+        await selectEquipment(activeEquipmentId);
+        await autoSaveToDisk();
     }
 
     function openFleetModal(mode) {
@@ -1151,6 +1237,7 @@
             let badgeClass = 'badge-operational';
             if (item.status === 'Under Maintenance') badgeClass = 'badge-maintenance';
             if (item.status === 'Down') badgeClass = 'badge-down';
+            if (item.status === 'Requested OUT') badgeClass = 'badge-requested-out';
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -1302,6 +1389,10 @@
 
         databaseState.movement_logs_store[activeEquipmentId].push(movementPacket);
         databaseState.master_assets_registry[activeEquipmentId].location = targetLocation;
+        
+        if (databaseState.global_status_store[activeEquipmentId] === 'Requested OUT') {
+            databaseState.global_status_store[activeEquipmentId] = 'Operational';
+        }
 
         document.getElementById('movementForm').reset();
         setMovementDateTimeNow();
