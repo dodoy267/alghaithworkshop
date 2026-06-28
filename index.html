@@ -3,1599 +3,1537 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Equipment Maintenance & Asset Dispatch System</title>
+    <title>Al Ghaith CMMS Portal</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0" />
     <style>
-        :root {
-            --primary: #0f172a;
-            --primary-light: #1e293b;
-            --accent: #6366f1;
-            --accent-hover: #4f46e5;
-            --success: #10b981;
-            --success-hover: #059669;
-            --warning: #f59e0b;
-            --warning-hover: #d97706;
-            --danger: #ef4444;
-            --danger-hover: #dc2626;
-            --secondary: #64748b;
-            --secondary-hover: #475569;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #334155;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-            --font: 'Inter', system-ui, -apple-system, sans-serif;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        .font-code { font-family: 'JetBrains Mono', monospace; }
         
-        body {
-            font-family: var(--font);
-            background-color: var(--bg);
-            color: var(--text-main);
-            margin: 0;
-            padding: 24px;
-            line-height: 1.5;
-            position: relative;
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        header {
-            background-color: var(--primary);
-            color: white;
-            padding: 24px 32px;
-            border-radius: var(--radius-lg);
-            margin-bottom: 32px;
-            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.15);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            position: relative;
-            z-index: 1001;
-        }
-
-        header h1 { 
-            margin: 0; 
-            font-size: 26px; 
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        header p { 
-            margin: 6px 0 0 0; 
-            color: #94a3b8;
-            font-size: 14px; 
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 12px;
-        }
-
-        .view-panel {
-            display: none;
-        }
-        .view-panel.active {
-            display: block;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: var(--radius-lg);
-            padding: 24px;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
-            border: 1px solid var(--border);
-            margin-bottom: 24px;
-        }
-
-        .card h2 {
-            margin-top: 0;
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--primary);
-            padding-bottom: 14px;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .search-container {
-            margin-bottom: 20px;
-        }
-        .search-container input {
-            width: 100%;
-            padding: 12px;
-            font-size: 14px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            box-sizing: border-box;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%2364748b" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>');
-            background-repeat: no-repeat;
-            background-position: 14px center;
-            padding-left: 42px;
-            color: var(--text-main);
-            transition: all 0.2s ease;
-        }
-        .search-container input:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        .table-container {
-            overflow-x: auto;
-            max-height: 480px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            background: #fff;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-            text-align: left;
-        }
-
-        th, td {
-            padding: 14px 16px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        th {
-            background-color: #f8fafc;
-            color: var(--text-muted);
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-            z-index: 5;
-        }
-
-        tr.clickable { cursor: pointer; transition: background 0.15s ease; }
-        tr.clickable:hover { background-color: #f1f5f9; }
-        tr.selected { background-color: #eef2ff !important; color: #312e81; font-weight: 500; }
-        
-        tr.request-pending-out {
-            background-color: #fff3cd !important;
-            color: #856404;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 500;
-            font-size: 13px;
-            color: var(--primary-light);
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            box-sizing: border-box;
-            font-size: 14px;
-            color: var(--text-main);
-            background-color: #fff;
-            transition: all 0.2s ease;
-        }
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        textarea { resize: vertical; height: 75px; }
-
-        .btn {
-            background-color: var(--accent);
-            color: white;
-            padding: 10px 18px;
-            border: none;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 13px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: all 0.2s ease;
-        }
-
-        .btn:hover { background-color: var(--accent-hover); }
-        .btn-success { background-color: var(--success); }
-        .btn-success:hover { background-color: var(--success-hover); }
-        .btn-danger { background-color: var(--danger); }
-        .btn-danger:hover { background-color: var(--danger-hover); }
-        .btn-warning { background-color: var(--warning); color: white; }
-        .btn-warning:hover { background-color: var(--warning-hover); }
-        .btn-secondary { background-color: var(--secondary); }
-        .btn-secondary:hover { background-color: var(--secondary-hover); }
-
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 12px;
-            border-radius: 4px;
-            margin-right: 4px;
-        }
-
-        .asset-summary {
-            background-color: #f8fafc;
-            border: 1px solid var(--border);
-            padding: 16px;
-            border-radius: var(--radius-md);
-            margin-bottom: 24px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-            font-size: 13px;
-        }
-        .asset-summary div {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        .asset-summary strong {
-            color: var(--text-muted);
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .checklist-container {
-            background-color: #fafafa;
-            border: 1px dashed var(--border);
-            padding: 16px;
-            border-radius: var(--radius-md);
-            margin-bottom: 20px;
-        }
-        .checklist-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .checklist-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 10px;
-        }
-        .checklist-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 13px;
-            cursor: pointer;
-            user-select: none;
-        }
-        .checklist-item input[type="checkbox"] {
-            width: auto;
-            margin: 0;
-            cursor: pointer;
-            height: 16px;
-            width: 16px;
-            accent-color: var(--accent);
-        }
-
-        .report-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 16px;
-            margin-top: 15px;
-        }
-        .report-stat-box {
-            background-color: #f8fafc;
-            border: 1px solid var(--border);
-            padding: 20px;
-            border-radius: var(--radius-md);
-        }
-        .report-stat-box label {
-            color: var(--text-muted);
-            font-size: 12px;
-            margin-bottom: 4px;
-        }
-        .report-stat-box div {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 11px;
-            text-align: center;
-        }
-        .badge-operational { background-color: #d1fae5; color: #065f46; }
-        .badge-maintenance { background-color: #fef3c7; color: #92400e; }
-        .badge-down { background-color: #fee2e2; color: #991b1b; }
-        
-        .badge-move-in { background-color: #e0f2fe; color: #0369a1; }
-        .badge-move-out { background-color: #fae8ff; color: #a21caf; }
-        .badge-requested-out { background-color: #fff3cd; color: #856404; border: 1px dashed #ffeeba; }
-
-        .flex-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 16px;
-            flex-wrap: wrap;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1100;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(4px);
-        }
-        .modal-content {
-            background-color: #fff;
-            margin: 5% auto;
-            padding: 28px;
-            border-radius: var(--radius-lg);
-            width: 90%;
-            max-width: 480px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-
-        .db-status-banner {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            color: #166534;
-            padding: 14px 20px;
-            border-radius: var(--radius-md);
-            margin-bottom: 24px;
-            font-size: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            z-index: 1001;
-        }
-
-        .page-freeze-overlay {
-            position: absolute;
-            top: 240px; 
-            left: 24px;
-            right: 24px;
-            bottom: 24px;
-            background: rgba(248, 250, 252, 0.7);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding-top: 100px;
-            border-radius: var(--radius-lg);
-            border: 2px dashed #cbd5e1;
-            transition: all 0.3s ease;
-        }
-        .freeze-notice-box {
-            background: white;
-            padding: 32px;
-            border-radius: var(--radius-lg);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--border);
-            text-align: center;
-            max-width: 450px;
-        }
-        .freeze-notice-box h3 {
-            margin: 0 0 12px 0;
-            color: var(--primary);
-            font-size: 20px;
-        }
-        .freeze-notice-box p {
-            margin: 0 0 20px 0;
-            color: var(--text-muted);
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .admin-only {
-            display: none !important;
-        }
-        body.admin-mode .admin-only {
-            display: inline-flex !important;
-        }
-        body.admin-mode table .admin-only {
-            display: inline-block !important;
-        }
-
-        .hidden-on-screen {
-            display: none !important;
-        }
-
-        .print-only-header, .print-only-signature { display: none; }
-        body.printing-registry #maintenancePanel, body.printing-ledger #registryPanel { display: none !important; }
-
         @media print {
-            body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; font-size: 12px; }
-            header, form, .flex-buttons, .card h2, .modal, .btn-sm, .search-container, .db-status-banner, .page-freeze-overlay { display: none !important; }
-            .view-panel { display: block !important; }
-            .card { box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 !important; }
-            .table-container { max-height: none !important; overflow: visible !important; border: none !important; }
-            table { width: 100% !important; border: 1px solid #000 !important; page-break-inside: auto; }
-            tr { page-break-inside: avoid; page-break-after: auto; }
-            th, td { border: 1px solid #000 !important; padding: 6px 8px !important; color: #000 !important; }
-            th { font-weight: bold !important; background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .badge { border: 1px solid #000 !important; background: transparent !important; color: #000 !important; padding: 2px 6px !important; border-radius: 4px !important; text-transform: uppercase; font-size: 10px !important; }
-            
-            .hidden-on-screen {
-                display: inline-block !important;
-                background: transparent !important;
-                color: black !important;
-                border: 1px solid #000 !important;
-                font-size: 10px !important;
-                padding: 2px 6px !important;
-            }
-
-            .print-only-header { display: block !important; margin-bottom: 20px; border-bottom: 3px double #000; padding-bottom: 10px; }
-            .print-only-header h1 { margin: 0 0 10px 0; font-size: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
-            body.printing-ledger .print-only-signature { display: block !important; margin-top: 50px; page-break-inside: avoid; }
-            .signature-block { display: flex; justify-content: flex-end; margin-top: 30px; }
-            .signature-line { width: 250px; border-top: 1px solid #000; text-align: center; padding-top: 5px; font-weight: 600; font-size: 13px; }
+            #app-container { display: none !important; }
+            #print-section { display: block !important; width: 100%; position: absolute; left: 0; top: 0; background: white; color: black; }
         }
     </style>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
 
-<div id="appContent">
-    <div class="container">
-        <header>
-            <div>
-                <h1>🛠️ MAINTENANCE MANAGEMENT SYSTEM</h1>
-                <p>Online Asset Logbook, Fleet Status Tracking & Service History Records</p>
-            </div>
-            <div class="header-actions">
-                <button id="roleToggleBtn" class="btn btn-warning" onclick="toggleAdminRole()">🔓 Switch to Admin View</button>
-                <button class="btn btn-success" onclick="fetchCloudDatabase()">🔄 Reload from Cloud</button>
-            </div>
-        </header>
+    <div id="print-section" class="hidden p-8 bg-white text-slate-900"></div>
 
-        <div class="db-status-banner" id="dbStatusBanner" style="background: #fef3c7; border-color: #fcd34d; color: #92400e;">
-            <div>
-                <strong>Cloud Sync Engine Status:</strong> 
-                <span id="dbStatusLabel">Connecting to JSONbin.io...</span>
-            </div>
-        </div>
-
-        <div class="page-freeze-overlay" id="freezeOverlay">
-            <div class="freeze-notice-box">
-                <h3>🔒 Access Frozen</h3>
-                <p>Establishing secure backend connection to the cloud registry server...</p>
-                <button class="btn btn-success" onclick="fetchCloudDatabase()">🔄 Retry Connection</button>
-            </div>
-        </div>
-
-        <div id="registryPanel" class="view-panel active">
-            <div class="card">
-                <div class="print-only-header" id="printRegistryHeader">
-                    <h1>MASTER FLEET REGISTRY ROSTER REPORT</h1>
-                    <p style="margin: 0; font-size: 12px; font-weight: normal;">Generated on: <span id="printRegistryDate"></span></p>
+    <div id="app-container" class="flex flex-col min-h-screen">
+        <nav class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shadow-xs z-10">
+            <div class="flex items-center space-x-3.5">
+                <img src="alghaithlogo.jpg" alt="Al Ghaith Trading & Industrial Services Logo" class="h-9 w-9 object-contain rounded">
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm font-bold tracking-tight text-slate-900">Al Ghaith Trading &amp; Industrial Services</span>
+                    </div>
+                    <p class="text-xs text-slate-500">Maintenance Management System</p>
                 </div>
+            </div>
 
-                <h2>📋 Equipment Registry</h2>
-                
-                <div class="search-container">
-                    <input type="text" id="fleetSearchInput" onkeyup="filterFleetRegistry()" placeholder="Search ID, name, model, serial, or location...">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-5 text-xs font-code text-slate-600">
+                    <div>Assets: <span id="stat-fleet-count" class="text-slate-900 font-bold">0</span></div>
+                    <div>Work Orders: <span id="stat-wo-count" class="text-slate-900 font-bold">0</span></div>
+                    <div>Logs Saved: <span id="stat-log-count" class="text-slate-900 font-bold">0</span></div>
+                    <div>Dispatches: <span id="stat-dispatch-count" class="text-slate-900 font-bold">0</span></div>
+                    <div>Technicians: <span id="stat-tech-count" class="text-slate-900 font-bold">0</span></div>
                 </div>
+            </div>
+        </nav>
 
-                <div class="table-container">
-                    <table id="equipmentTable">
-                        <thead>
-                            <tr>
-                                <th style="width: 50px;">No.</th>
-                                <th>ID</th>
-                                <th>Equipment Name</th>
-                                <th>Model No.</th>
-                                <th>Serial No.</th>
-                                <th>Current Location</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="equipmentTableBody"></tbody>
-                    </table>
-                </div>
-                
-                <div class="flex-buttons">
-                    <button id="dispatchRequestBtn" class="btn btn-danger hidden-on-screen" style="background-color: #d946ef;" onclick="requestEquipmentOut()">📤 Request Dispatch (OUT)</button>
-                    <button id="goToMaintenanceBtn" class="btn btn-accent hidden-on-screen" onclick="navigateToView('maintenance')">🔧 Go to Maintenance Form</button>
-                    <button id="goToMovementBtn" class="btn btn-warning hidden-on-screen" style="background-color: var(--accent-hover);" onclick="navigateToView('movement')">🚚 Go to In/Out Dispatch Form</button>
+        <div class="flex flex-1 overflow-hidden">
+            <aside class="w-64 bg-white border-r border-slate-200 p-4 flex flex-col justify-between shadow-xs">
+                <div class="space-y-1">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-2">Operations Modules</p>
                     
-                    <button id="unlockNavControlsBtn" class="btn btn-secondary" style="background-color: #0f172a;" onclick="unlockNavigationControls()">🔒 Unlock Panel Navigation Controls</button>
-                    
-                    <button class="btn btn-success admin-only" onclick="openFleetModal('add')">➕ Add New Entry</button>
-                    <button class="btn btn-warning admin-only" onclick="openFleetModal('edit')">✏️ Edit Selected</button>
-                    <button class="btn btn-danger admin-only" onclick="deleteEquipment()">🗑️ Delete Selected</button>
-                    <button class="btn btn-secondary" onclick="triggerRegistryPrint()">🖨️ Print Fleet Roster</button>
+                    <button onclick="setModule('fleet')" id="tab-fleet" class="mod-tab flex items-center space-x-3 w-full px-3 py-2.5 rounded text-sm font-semibold transition bg-slate-900 text-white shadow-xs">
+                        <span class="material-symbols-outlined">analytics</span>
+                        <span>Master Fleet Registry</span>
+                    </button>
+
+                    <button onclick="setModule('wo')" id="tab-wo" class="mod-tab flex items-center space-x-3 w-full px-3 py-2.5 rounded text-sm font-semibold transition text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                        <span class="material-symbols-outlined">build</span>
+                        <span>Maintenance Work Orders</span>
+                    </button>
+
+                    <button onclick="setModule('log')" id="tab-log" class="mod-tab flex items-center space-x-3 w-full px-3 py-2.5 rounded text-sm font-semibold transition text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                        <span class="material-symbols-outlined">history_edu</span>
+                        <span>Maintenance Logs / History</span>
+                    </button>
+
+                    <button onclick="setModule('dispatch')" id="tab-dispatch" class="mod-tab flex items-center space-x-3 w-full px-3 py-2.5 rounded text-sm font-semibold transition text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                        <span class="material-symbols-outlined">local_shipping</span>
+                        <span>In/Out Dispatch</span>
+                    </button>
+
+                    <button onclick="setModule('tech')" id="tab-tech" class="mod-tab flex items-center space-x-3 w-full px-3 py-2.5 rounded text-sm font-semibold transition text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                        <span class="material-symbols-outlined">badge</span>
+                        <span>Technician Profile</span>
+                    </button>
+
+                    <button onclick="setModule('reports')" id="tab-reports" class="mod-tab flex items-center space-x-3 w-full px-3 py-2.5 rounded text-sm font-semibold transition text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                        <span class="material-symbols-outlined">monitoring</span>
+                        <span>Reports & Diagnostics</span>
+                    </button>
                 </div>
-            </div>
-        </div>
 
-        <div id="maintenancePanel" class="view-panel">
-            <div style="margin-bottom: 20px;">
-                <button class="btn btn-secondary" onclick="showRegistryView()">⬅️ Back to Fleet Registry</button>
-            </div>
-
-            <div class="card">
-                <h2>🔍 Asset Overview (Maintenance): <span class="activeIdHeader">-</span></h2>
-                <div class="asset-summary">
-                    <div><strong>Equipment Name</strong> <span class="summaryName">-</span></div>
-                    <div><strong>Model No</strong> <span class="summaryModel">-</span></div>
-                    <div><strong>Serial No</strong> <span class="summarySerial">-</span></div>
-                    <div><strong>Current Location</strong> <span class="summaryLocation">-</span></div>
-                    <div><strong>Current Status</strong> <span class="summaryStatus">-</span></div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>📝 Record Maintenance Log</h2>
-                <form id="maintenanceForm" onsubmit="saveLog(event)">
-                    <input type="hidden" id="editingLogIndex" value="-1">
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                        <div class="form-group">
-                            <label>Inspection Date</label>
-                            <input type="date" id="logDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Set Operational Status</label>
-                            <select id="equipmentStatusSelect" onchange="updateLiveStatusField()">
-                                <option value="Operational">Operational</option>
-                                <option value="Under Maintenance">Under Maintenance</option>
-                                <option value="Down">Down</option>
-                                <option value="Requested OUT">Requested OUT</option>
-                            </select>
-                        </div>
+                <div class="p-3 bg-slate-50 rounded border border-slate-200">
+                    <div class="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1">Authorization Matrix</div>
+                    <div id="connection-badge" class="text-xs text-amber-600 font-medium flex items-center mb-1">
+                        <span class="h-2 w-2 rounded-full bg-amber-500 mr-2 animate-pulse"></span>
+                        Connecting Terminal...
                     </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                        <div class="form-group">
-                            <label>Current Hours Reading</label>
-                            <input type="number" step="0.1" id="currentHours" placeholder="Running hours" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Target Hour Maintenance</label>
-                            <input type="number" step="0.1" id="targetMaintenanceHours" placeholder="Next milestone" required>
-                        </div>
-                    </div>
-
-                    <div class="checklist-container">
-                        <div class="checklist-title">🛠️ Preventive Maintenance Checklist</div>
-                        <div class="checklist-grid">
-                            <label class="checklist-item"><input type="checkbox" id="pmFluids" onchange="generateActionsFromChecklist()"> Fluids</label>
-                            <label class="checklist-item"><input type="checkbox" id="pmFilters" onchange="generateActionsFromChecklist()"> Filters</label>
-                            <label class="checklist-item"><input type="checkbox" id="pmBelts" onchange="generateActionsFromChecklist()"> Belts/Hoses</label>
-                            <label class="checklist-item"><input type="checkbox" id="pmTorque" onchange="generateActionsFromChecklist()"> Torque</label>
-                            <label class="checklist-item"><input type="checkbox" id="pmGauges" onchange="generateActionsFromChecklist()"> Gauges</label>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Inspection Fault Report</label>
-                        <textarea id="faultReport" placeholder="Describe problems found..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Service Performed / Action Taken</label>
-                        <textarea id="serviceAction" placeholder="Adjustments or work executed..."></textarea>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                        <div class="form-group">
-                            <label>Parts Replaced</label>
-                            <input type="text" id="partsReplaced" placeholder="Gaskets, O-Rings, etc.">
-                        </div>
-                        <div class="form-group">
-                            <label>Technician Name</label>
-                            <input type="text" id="technician" placeholder="Full name" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Remarks</label>
-                        <input type="text" id="remarks" placeholder="General notes">
-                    </div>
-
-                    <div class="flex-buttons">
-                        <button type="submit" id="formSubmitBtn" class="btn btn-success">Save Maintenance Entry</button>
-                        <button type="button" id="cancelEditBtn" class="btn btn-secondary" style="display:none;" onclick="cancelLogEditing()">Cancel</button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="card">
-                <h2>🗓️ Historical Maintenance Ledger: <span class="ledgerIdHeader">-</span></h2>
-                <div class="table-container">
-                    <table id="historyTable">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Current Hours</th>
-                                <th>Target Maint. Hours</th>
-                                <th>Status Logged</th>
-                                <th>Fault Report</th>
-                                <th>Action Taken</th>
-                                <th>Parts Replaced</th>
-                                <th>Technician</th>
-                                <th>Remarks</th>
-                                <th style="min-width: 140px; text-align: center;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="historyTableBody"></tbody>
-                    </table>
-                </div>
-                <div class="flex-buttons">
-                    <button class="btn btn-secondary" onclick="exportCSV()">Export Maintenance Log to CSV</button>
-                    <button class="btn btn-warning" onclick="triggerLedgerPrint()">🖨️ Print Historical Ledger</button>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>📊 Automated Maintenance Metrics Report: <span class="reportIdHeader">-</span></h2>
-                <div class="report-grid">
-                    <div class="report-stat-box">
-                        <label>Total Logged Events</label>
-                        <div id="statTotalEvents">0</div>
-                    </div>
-                    <div class="report-stat-box">
-                        <label>Max Accumulated Runtime</label>
-                        <div id="statMaxHours">0.0 hrs</div>
-                    </div>
-                    <div class="report-stat-box">
-                        <label>Avg Maintenance Interval</label>
-                        <div id="statAvgInterval">0.0 hrs</div>
+                    <div id="role-badge" class="text-[10px] font-code font-bold uppercase px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 inline-block">
+                        Role: Unknown
                     </div>
                 </div>
-            </div>
-        </div>
+            </aside>
 
-        <div id="movementPanel" class="view-panel">
-            <div style="margin-bottom: 20px;">
-                <button class="btn btn-secondary" onclick="showRegistryView()">⬅️ Back to Fleet Registry</button>
-            </div>
-
-            <div class="card">
-                <h2>🔍 Asset Overview (Dispatch Tracking): <span class="activeIdHeader">-</span></h2>
-                <div class="asset-summary">
-                    <div><strong>Equipment Name</strong> <span class="summaryName">-</span></div>
-                    <div><strong>Model No</strong> <span class="summaryModel">-</span></div>
-                    <div><strong>Serial No</strong> <span class="summarySerial">-</span></div>
-                    <div><strong>Current Location</strong> <span class="summaryLocation">-</span></div>
-                    <div><strong>Current Status</strong> <span class="summaryStatus">-</span></div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>📦 Record Equipment In / Out Logic & Dispatch Request</h2>
-                <form id="movementForm" onsubmit="saveMovementLog(event)">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                        <div class="form-group">
-                            <label>Movement Type / Request State</label>
-                            <select id="moveType" required>
-                                <option value="Out">⬅️ Equipment OUT (Dispatched to Site)</option>
-                                <option value="In">➡️ Equipment IN (Returned to Yard/Site)</option>
-                            </select>
+            <main class="flex-1 p-8 overflow-y-auto">
+                <section id="pane-fleet" class="pane-view space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900 tracking-tight">Master Fleet Registry</h2>
+                            <p class="text-xs text-slate-500">Primary technical index indexed by unique hardware Asset IDs.</p>
                         </div>
-                        <div class="form-group">
-                            <label>Transfer Date & Time</label>
-                            <input type="datetime-local" id="moveDateTime" required>
+                        <div class="flex items-center space-x-2">
+                            <div class="relative flex items-center">
+                                <span class="material-symbols-outlined text-slate-400 absolute left-2.5 text-lg pointer-events-none">search</span>
+                                <input type="text" id="in-f-search" oninput="refreshWorkspaceView()" placeholder="Search assets..." class="bg-white border border-slate-300 text-slate-800 rounded text-xs pl-8 pr-3 py-2 focus:outline-none focus:border-slate-900 w-48 md:w-64 shadow-xs">
+                            </div>
+                            <button id="btn-action-add-fleet" onclick="openAddModal()" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs px-4 py-2.5 rounded flex items-center space-x-1.5 transition cursor-pointer shadow-sm shrink-0">
+                                <span class="material-symbols-outlined text-sm">add</span>
+                                <span>Register Asset Spec</span>
+                            </button>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label>Target Site / Deployment Location</label>
-                        <input type="text" id="moveLocation" placeholder="e.g., Birkat Al Awamer Yard, Dukhan Project Site" required>
+                    <div class="bg-white border border-slate-200 rounded shadow-xs overflow-hidden">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold tracking-wide uppercase">
+                                    <th class="p-4">Primary ID</th>
+                                    <th class="p-4">Model Number</th>
+                                    <th class="p-4">Equipment Description</th>
+                                    <th class="p-4">Serial Number</th>
+                                    <th class="p-4">Location</th>
+                                    <th class="p-4">Status</th>
+                                    <th class="p-4 text-center w-36 th-actions-col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rows-fleet" class="divide-y divide-slate-100 text-slate-700"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="pane-wo" class="pane-view space-y-4 hidden">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900 tracking-tight">Maintenance Work Orders</h2>
+                            <p class="text-xs text-slate-500">Operational tracking and scheduling logs.</p>
+                        </div>
+                        <button id="btn-action-add-wo" onclick="openAddWoModal()" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs px-4 py-2.5 rounded flex items-center space-x-1.5 transition cursor-pointer shadow-sm">
+                            <span class="material-symbols-outlined text-sm">add_task</span>
+                            <span>Create Work Order</span>
+                        </button>
                     </div>
 
-                    <div class="form-group">
-                        <label>Movement Notes / Dispatch Assignment Details</label>
-                        <textarea id="moveNotes" placeholder="Reason for asset dispatch, operation scopes, assignment instructions, etc."></textarea>
+                    <div class="bg-white border border-slate-200 rounded shadow-xs overflow-hidden">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold tracking-wide uppercase">
+                                    <th class="p-4">Order ID</th>
+                                    <th class="p-4">Equipment Asset</th>
+                                    <th class="p-4">Current Metric</th>
+                                    <th class="p-4">Target Metric</th>
+                                    <th class="p-4">Remaining Hours / Status Info</th>
+                                    <th class="p-4">Status</th>
+                                    <th class="p-4 text-center w-56 th-actions-col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rows-wo" class="divide-y divide-slate-100 text-slate-700"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="pane-log" class="pane-view space-y-4 hidden">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900 tracking-tight">Maintenance Logs & Service History</h2>
+                            <p class="text-xs text-slate-500">Execution records from resolved or active maintenance sequences.</p>
+                        </div>
+                        <button id="btn-action-add-log" onclick="openAddLogModal()" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs px-4 py-2.5 rounded flex items-center space-x-1.5 transition cursor-pointer shadow-sm">
+                            <span class="material-symbols-outlined text-sm">history_edu</span>
+                            <span>Log Maintenance Execution</span>
+                        </button>
                     </div>
 
-                    <div class="flex-buttons">
-                        <button type="submit" class="btn btn-accent" style="background-color: var(--accent-hover);">Confirm & Save Dispatch Record</button>
+                    <div class="bg-white border border-slate-200 rounded shadow-xs overflow-hidden">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold tracking-wide uppercase">
+                                    <th class="p-4">Log ID / Date</th>
+                                    <th class="p-4">Equipment Asset</th>
+                                    <th class="p-4">Interval Bounds</th>
+                                    <th class="p-4">Remaining Before Maint.</th>
+                                    <th class="p-4">Fault Report & Action Taken</th>
+                                    <th class="p-4">Parts & Tech</th>
+                                    <th class="p-4">Asset Status</th>
+                                    <th class="p-4 text-center w-48 th-actions-col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rows-log" class="divide-y divide-slate-100 text-slate-700"></tbody>
+                        </table>
                     </div>
-                </form>
-            </div>
+                </section>
 
-            <div class="card">
-                <h2>🚚 Location Tracking & In/Out Movement History</h2>
-                <div class="table-container">
-                    <table id="movementTable">
-                        <thead>
-                            <tr>
-                                <th>Date & Time</th>
-                                <th>Type</th>
-                                <th>Site Location</th>
-                                <th>Notes / Purpose</th>
-                                <th style="text-align: center; width: 90px;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="movementTableBody"></tbody>
-                    </table>
-                </div>
-                <div class="flex-buttons">
-                    <button class="btn btn-secondary" onclick="exportMovementCSV()">Export Movements to CSV</button>
-                </div>
-            </div>
-        </div>
+                <section id="pane-dispatch" class="pane-view space-y-4 hidden">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900 tracking-tight">In/Out Dispatch Logs</h2>
+                            <p class="text-xs text-slate-500">Mobilization tracking panel.</p>
+                        </div>
+                        <button id="btn-action-add-dispatch" onclick="openAddDispatchModal()" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs px-4 py-2.5 rounded flex items-center space-x-1.5 transition cursor-pointer shadow-sm">
+                            <span class="material-symbols-outlined text-sm">local_shipping</span>
+                            <span>Record Dispatch Event</span>
+                        </button>
+                    </div>
 
-    </div>
-</div>
+                    <div class="bg-white border border-slate-200 rounded shadow-xs overflow-hidden">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold tracking-wide uppercase">
+                                    <th class="p-4">Dispatch ID</th>
+                                    <th class="p-4">Equipment Asset</th>
+                                    <th class="p-4">Event Type</th>
+                                    <th class="p-4">Destination / Project</th>
+                                    <th class="p-4">Date</th>
+                                    <th class="p-4 text-center w-36 th-actions-col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rows-dispatch" class="divide-y divide-slate-100 text-slate-700"></tbody>
+                        </table>
+                    </div>
+                </section>
 
-<div id="fleetModal" class="modal">
-    <div class="modal-content">
-        <h3 id="modalTitle" style="margin-top: 0; color: var(--primary); font-weight: 700;">Add Equipment</h3>
-        <input type="hidden" id="modalMode" value="add">
-        
-        <div class="form-group">
-            <label>Equipment Code / ID Tag</label>
-            <input type="text" id="modalAssetId" placeholder="e.g., B21" required>
-        </div>
-        <div class="form-group">
-            <label>Equipment Name</label>
-            <input type="text" id="modalAssetName" placeholder="e.g., High Pressure Pump Unit" required>
-        </div>
-        <div class="form-group">
-            <label>Model No.</label>
-            <input type="text" id="modalAssetModel" placeholder="e.g., NLB40201D" required>
-        </div>
-        <div class="form-group">
-            <label>Serial Number</label>
-            <input type="text" id="modalAssetSerial" placeholder="e.g., U 500100-1" required>
-        </div>
-        <div class="form-group">
-            <label>Location / Site</label>
-            <input type="text" id="modalAssetLocation" placeholder="e.g., WORKSHOP / Site Project" required>
-        </div>
-        
-        <div class="flex-buttons" style="justify-content: flex-end; margin-top: 24px;">
-            <button class="btn btn-secondary" onclick="closeFleetModal()">Cancel</button>
-            <button class="btn btn-success" onclick="submitFleetForm()">Confirm Roster Commit</button>
+                <section id="pane-tech" class="pane-view space-y-4 hidden">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900 tracking-tight">Technician Profile Directory</h2>
+                            <p class="text-xs text-slate-500">Engineering roster and technical credentials.</p>
+                        </div>
+                        <button id="btn-action-add-tech" onclick="openAddTechModal()" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs px-4 py-2.5 rounded flex items-center space-x-1.5 transition cursor-pointer shadow-sm">
+                            <span class="material-symbols-outlined text-sm">person_add</span>
+                            <span>Onboard Technician</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded shadow-xs overflow-hidden">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold tracking-wide uppercase">
+                                    <th class="p-4">Tech ID</th>
+                                    <th class="p-4">Full Name</th>
+                                    <th class="p-4">Designation</th>
+                                    <th class="p-4">Contact Info</th>
+                                    <th class="p-4 text-center w-36 th-actions-col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rows-tech" class="divide-y divide-slate-100 text-slate-700"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="pane-reports" class="pane-view space-y-6 hidden">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900 tracking-tight">Reports & Analytical Diagnostics</h2>
+                            <p class="text-xs text-slate-500">Live operational intelligence breakdowns across registered machinery indices.</p>
+                        </div>
+                        <button onclick="printExecutiveReport()" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs px-4 py-2.5 rounded flex items-center space-x-1.5 transition cursor-pointer shadow-sm">
+                            <span class="material-symbols-outlined text-sm">print</span>
+                            <span>Print Report Sheet</span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                        <div class="bg-white border border-slate-200 rounded p-4 shadow-xs flex flex-col justify-between">
+                            <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wide">Operational</span>
+                            <span id="rep-stat-operational" class="text-3xl font-black text-emerald-600 mt-2">0</span>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded p-4 shadow-xs flex flex-col justify-between">
+                            <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wide">In Maintenance</span>
+                            <span id="rep-stat-maintenance" class="text-3xl font-black text-amber-600 mt-2">0</span>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded p-4 shadow-xs flex flex-col justify-between">
+                            <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wide">Down</span>
+                            <span id="rep-stat-down" class="text-3xl font-black text-rose-600 mt-2">0</span>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded p-4 shadow-xs flex flex-col justify-between">
+                            <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wide">Dispatched</span>
+                            <span id="rep-stat-dispatched" class="text-3xl font-black text-blue-600 mt-2">0</span>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded p-4 shadow-xs flex flex-col justify-between">
+                            <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wide">Standby</span>
+                            <span id="rep-stat-standby" class="text-3xl font-black text-slate-600 mt-2">0</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded shadow-xs p-6 space-y-4">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2">Active Fleet Asset Allocation Index</h3>
+                        <div class="overflow-hidden">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase tracking-wider">
+                                        <th class="p-3">Asset ID</th>
+                                        <th class="p-3">Model</th>
+                                        <th class="p-3">Description</th>
+                                        <th class="p-3">Live Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rep-rows-allocation" class="divide-y divide-slate-100 text-slate-700"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </main>
         </div>
     </div>
-</div>
 
-<script>
-    const BIN_ID = '6a3617d8da38895dfee149a4';
-    const MASTER_KEY = '$2a$10$S0kauhvqpdlPsiJnEa5aUOirngO/n7MWnqEHVrJJ9PJhIAKnDLUNm';
-    const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-    
-    // Cryptographic hash footprint representation of the string "admin123"
-    const ADMIN_PASSWORD_HASH = '240af518e42cd8f1a118770174d49cd410329a64ed384e034105217e4c343de4';
+    <!-- REGISTER FLEET MODAL -->
+    <div id="modal-add-fleet" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4 z-50">
+        <div class="bg-white border border-slate-200 rounded-lg w-full max-w-md p-6 space-y-4 shadow-xl">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+                <h3 id="modal-title" class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-slate-700">playlist_add</span> Register Asset Specifications
+                </h3>
+                <button onclick="toggleModal('modal-add-fleet', false)" class="text-slate-400 hover:text-slate-600 font-bold text-lg cursor-pointer">×</button>
+            </div>
+            <form id="form-fleet" onsubmit="executeFleetSubmission(event)" class="space-y-3.5 text-xs">
+                <input type="hidden" id="in-f-mode" value="create">
+                <input type="hidden" id="in-f-old-id" value="">
 
-    let databaseState = {
-        master_assets_registry: {},
-        global_status_store: {},
-        historical_logs_store: {},
-        movement_logs_store: {}
-    };
-    
-    let activeEquipmentId = '';
-    let isConnected = false;
-    let isAdmin = false; 
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1 font-code">Asset ID (Primary Key Identification) *</label>
+                    <input type="text" id="in-f-id" required class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 uppercase font-code focus:outline-none focus:border-slate-900" placeholder="e.g. WJ-001">
+                </div>
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1 font-code">Model Number *</label>
+                    <input type="text" id="in-f-model" required class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 uppercase font-code focus:outline-none focus:border-slate-900" placeholder="e.g. NLB-225-40K">
+                </div>
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1">Equipment Description *</label>
+                    <input type="text" id="in-f-description" required class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:outline-none focus:border-slate-900" placeholder="e.g. High Pressure Hydro-Jetting Rig System">
+                </div>
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1 font-code">Serial Number</label>
+                    <input type="text" id="in-f-serial" class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 uppercase font-code focus:outline-none focus:border-slate-900" placeholder="e.g. SN-987654">
+                </div>
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1 font-code">Location</label>
+                    <input type="text" id="in-f-location" class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 uppercase font-code focus:outline-none focus:border-slate-900" placeholder="e.g. Birkat Al Awamer Base">
+                </div>
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1">Operational Status *</label>
+                    <select id="in-f-status" required class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:outline-none focus:border-slate-900">
+                        <option value="Operational">Operational</option>
+                        <option value="In Maintenance">In Maintenance</option>
+                        <option value="Down">Down</option>
+                        <option value="Standby">Standby</option>
+                        <option value="Dispatched">Dispatched</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="toggleModal('modal-add-fleet', false)" class="bg-slate-100 text-slate-700 border border-slate-200 px-3 py-2 rounded font-medium cursor-pointer">Cancel</button>
+                    <button type="submit" id="btn-submit-text" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded font-bold cursor-pointer">Commit Asset Spec</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-    document.addEventListener("DOMContentLoaded", () => {
-        document.getElementById('logDate').valueAsDate = new Date();
-        setMovementDateTimeNow();
-        document.getElementById('appContent').style.display = 'block';
-        clearMainDashboardDisplay();
-        fetchCloudDatabase();
-        updateRoleUI();
-    });
+    <!-- WORK ORDER MODAL (WITH SEARCH FILTER) -->
+    <div id="modal-add-wo" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4 z-50">
+        <div class="bg-white border border-slate-200 rounded-lg w-full max-w-md p-6 space-y-4 shadow-xl">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+                <h3 id="modal-wo-title" class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-slate-700">playlist_add</span> Create Maintenance Work Order
+                </h3>
+                <button onclick="toggleModal('modal-add-wo', false)" class="text-slate-400 hover:text-slate-600 font-bold text-lg cursor-pointer">×</button>
+            </div>
+            <form id="form-wo" onsubmit="executeWoSubmission(event)" class="space-y-3.5 text-xs">
+                <input type="hidden" id="in-w-mode" value="create">
+                <input type="hidden" id="in-w-old-id" value="">
 
-    // Helper utility to produce text matching footprint profiles using Web Crypto SHA-256 APIs
-    async function hashInputText(plainText) {
-        const utf8Encoder = new TextEncoder().encode(plainText);
-        const bufferResult = await crypto.subtle.digest('SHA-256', utf8Encoder);
-        const arrayResult = Array.from(new Uint8Array(bufferResult));
-        return arrayResult.map(byte => byte.toString(16).padStart(2, '0')).join('');
-    }
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1 font-code">Order ID *</label>
+                    <input type="text" id="in-w-id" required class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 font-code outline-none font-bold focus:border-slate-900 focus:outline-none" placeholder="e.g. WO-1001">
+                </div>
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1">Target Equipment Asset *</label>
+                    <div class="relative mb-1">
+                        <input type="text" id="in-w-search-asset" oninput="filterDropdownSearch('in-w-search-asset', 'in-w-asset')" placeholder="Type to filter equipment list below..." class="w-full bg-slate-100 border border-slate-300 rounded p-1.5 text-slate-800 text-[11px] focus:outline-none focus:border-slate-500">
+                    </div>
+                    <select id="in-w-asset" required class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 font-code focus:outline-none focus:border-slate-900"></select>
+                </div>
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1">Tracking Type *</label>
+                    <select id="in-w-type" onchange="toggleMetricInputs(this.value)" class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:outline-none focus:border-slate-900">
+                        <option value="hours">Running Hours</option>
+                        <option value="date">Calendar Date Target</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
 
-    async function toggleAdminRole() {
-        if (!isAdmin) {
-            const inputPassword = prompt("🔐 Enter administrator access key password:");
-            if (inputPassword === null) return; 
-            
-            // Check cryptographic footprint profile verification strings
-            const processedHash = await hashInputText(inputPassword);
-if (true) { 
-        isAdmin = true;
-    } else {
-        alert("❌ Incorrect password. Access denied.");
-        return;
-    }
-        } else {
-            isAdmin = false;
-        }
-        updateRoleUI();
-    }
+                <div id="wrapper-hours-inputs" class="space-y-3">
+                    <div>
+                        <label class="block text-slate-600 font-medium mb-1">Current Hours Reading *</label>
+                        <input type="number" id="in-w-current-hours" min="0" class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:outline-none focus:border-slate-900" placeholder="e.g. 1250">
+                    </div>
+                    <div>
+                        <label class="block text-slate-600 font-medium mb-1">Target Hours Maintenance *</label>
+                        <input type="number" id="in-w-target-hours" min="0" class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:outline-none focus:border-slate-900" placeholder="e.g. 1500">
+                    </div>
+                </div>
 
-    function updateRoleUI() {
-        const toggleBtn = document.getElementById('roleToggleBtn');
-        if (isAdmin) {
-            document.body.classList.add('admin-mode');
-            toggleBtn.innerText = "🔒 Switch to User View";
-            toggleBtn.style.backgroundColor = "var(--primary-light)";
-        } else {
-            document.body.classList.remove('admin-mode');
-            toggleBtn.innerText = "🔓 Switch to Admin View";
-            toggleBtn.style.backgroundColor = "var(--warning)";
-        }
-        if(activeEquipmentId) {
-            renderHistoryLedger();
-            renderMovementLedger();
-        }
-    }
+                <div id="wrapper-date-inputs" class="space-y-3 hidden">
+                    <div>
+                        <label class="block text-slate-600 font-medium mb-1">Current Date Logging *</label>
+                        <input type="date" id="in-w-current-date" class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:outline-none focus:border-slate-900">
+                    </div>
+                    <div>
+                        <label class="block text-slate-600 font-medium mb-1">Target Date Maintenance *</label>
+                        <input type="date" id="in-w-target-date" class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:outline-none focus:border-slate-900">
+                    </div>
+                </div>
 
-    function setMovementDateTimeNow() {
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        document.getElementById('moveDateTime').value = now.toISOString().slice(0,16);
-    }
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1">Order Status *</label>
+                    <select id="in-w-status" required class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:outline-none focus:border-slate-900">
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Check-up/Inspection">Check-up/Inspection</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="toggleModal('modal-add-wo', false)" class="bg-slate-100 text-slate-700 border border-slate-200 px-3 py-2 rounded font-medium cursor-pointer">Cancel</button>
+                    <button type="submit" id="btn-wo-submit-text" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded font-bold cursor-pointer">Commit Work Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-    function navigateToView(targetPanel) {
-        if (!activeEquipmentId || !databaseState.master_assets_registry[activeEquipmentId]) {
-            alert('Please select an active equipment row from the registry table first.');
-            return;
-        }
-        
-        document.getElementById('registryPanel').classList.remove('active');
-        document.getElementById('maintenancePanel').classList.remove('active');
-        document.getElementById('movementPanel').classList.remove('active');
+    <!-- MAINTENANCE LOG ENTRY MODAL -->
+    <div id="modal-add-log" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4 z-50">
+        <div class="bg-white border border-slate-200 rounded-lg w-full max-w-lg p-6 space-y-4 shadow-xl overflow-y-auto max-h-[90vh]">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+                <h3 id="modal-log-title" class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-slate-700">history_edu</span> Log Maintenance Execution
+                </h3>
+                <button onclick="toggleModal('modal-add-log', false)" class="text-slate-400 hover:text-slate-600 font-bold text-lg cursor-pointer">×</button>
+            </div>
+            <form id="form-log" onsubmit="executeLogSubmission(event)" class="space-y-3.5 text-xs">
+                <input type="hidden" id="in-l-mode" value="create">
 
-        if (targetPanel === 'maintenance') {
-            document.getElementById('maintenancePanel').classList.add('active');
-        } else if (targetPanel === 'movement') {
-            document.getElementById('movementPanel').classList.add('active');
-        }
-    }
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-600 font-medium mb-1 font-code">Maintenance Log ID *</label>
+                        <input type="text" id="in-l-id" required class="w-full bg-slate-50 border border-slate-200 rounded p-2 text-slate-900 font-code outline-none font-bold" placeholder="e.g. LOG-5001">
+                    </div>
+                    <div>
+                        <label class="block text-slate-600 font-medium mb-1">Execution Date *</label>
+                        <input type="date" id="in-l-date" required class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:outline-none focus:border-slate-900">
+                    </div>
+                </div>
 
-    function showRegistryView() {
-        document.getElementById('maintenancePanel').classList.remove('active');
-        document.getElementById('movementPanel').classList.remove('active');
-        document.getElementById('registryPanel').classList.add('active');
-    }
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1">Select Reference Work Order *</label>
+                    <select id="in-l-wo" required onchange="syncMetricsFromWorkOrder(this.value)" class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 font-code focus:outline-none focus:border-slate-900"></select>
+                </div>
 
-    function updateStatusBanner(customText = "", isError = false) {
-        const banner = document.getElementById('dbStatusBanner');
-        const label = document.getElementById('dbStatusLabel');
-        const overlay = document.getElementById('freezeOverlay');
-        
-        if (isError) {
-            banner.style.background = "#fee2e2";
-            banner.style.borderColor = "#fecaca";
-            banner.style.color = "#991b1b";
-            label.innerHTML = `⚠️ <strong>Sync Error:</strong> ${customText}`;
-            overlay.style.display = 'flex';
-        } else if (!isConnected) {
-            banner.style.background = "#fef3c7";
-            banner.style.borderColor = "#fcd34d";
-            banner.style.color = "#92400e";
-            label.innerHTML = `🔄 <strong>Status:</strong> Connecting to JSONbin.io Cloud Database...`;
-            overlay.style.display = 'flex';
-        } else {
-            banner.style.background = "#f0fdf4";
-            banner.style.borderColor = "#bbf7d0";
-            banner.style.color = "#166534";
-            label.innerHTML = `⚡ <strong>Real-Time Cloud Sync Engaged!</strong> Connected to Bin ID: <strong>${BIN_ID}</strong>. ${customText || 'All data changes are auto-saved to the cloud instantly.'}`;
-            overlay.style.display = 'none';
-        }
-    }
+                <div class="grid grid-cols-3 gap-3 p-3 bg-slate-50 border border-slate-200 rounded">
+                    <div>
+                        <label class="block text-slate-500 font-medium mb-1">Logged / Initial Value</label>
+                        <input type="text" id="in-l-current" readonly class="w-full bg-slate-200/70 border border-slate-300 text-slate-600 font-code rounded p-2 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-slate-500 font-medium mb-1">Target Threshold Limit</label>
+                        <input type="text" id="in-l-current-target" readonly class="w-full bg-slate-200/70 border border-slate-300 text-slate-600 font-code rounded p-2 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-slate-500 font-medium mb-1">Remaining Hours</label>
+                        <input type="text" id="in-l-remaining" readonly class="w-full bg-slate-200/70 border border-slate-300 text-slate-700 font-bold font-code rounded p-2 outline-none" placeholder="Calculated">
+                    </div>
+                </div>
 
-    function refreshSystemDashboardView() {
-        renderMasterRegistryTable();
-    }
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1">Inspection Fault Report *</label>
+                    <textarea id="in-l-fault" required rows="2" class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:outline-none focus:border-slate-900" placeholder="Describe detected failure points or engineering observations..."></textarea>
+                </div>
 
-    async function fetchCloudDatabase() {
-        isConnected = false;
-        updateStatusBanner();
-        try {
-            const response = await fetch(API_URL, {
-                method: 'GET',
-                headers: { 'X-Master-Key': MASTER_KEY }
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1">Service Performed / Corrective Action *</label>
+                    <textarea id="in-l-action" required rows="2" class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:outline-none focus:border-slate-900" placeholder="Detail repair methods, calibrations, or fluid exchanges completed..."></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1">Parts Replaced / Materials Consumed</label>
+                    <input type="text" id="in-l-parts" class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:outline-none focus:border-slate-900" placeholder="e.g. Element filters, BJV Plunger kits, O-Rings">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-600 font-medium mb-1">Assigned Technician *</label>
+                        <select id="in-l-tech" required class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:outline-none focus:border-slate-900"></select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-600 font-medium mb-1">Set Asset Operational Status *</label>
+                        <select id="in-l-status" required class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 font-medium focus:outline-none focus:border-slate-900">
+                            <option value="Operational">Operational (Resolves Order)</option>
+                            <option value="In Maintenance">In Maintenance</option>
+                            <option value="Down">Down</option>
+                            <option value="Standby">Standby</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1">Remarks / Advisory Notes</label>
+                    <input type="text" id="in-l-remarks" class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:outline-none focus:border-slate-900" placeholder="Next inspection dates or special operation constraints...">
+                </div>
+
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="toggleModal('modal-add-log', false)" class="bg-slate-100 text-slate-700 border border-slate-200 px-3 py-2 rounded font-medium cursor-pointer">Cancel</button>
+                    <button type="submit" id="btn-log-submit-text" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded font-bold cursor-pointer">Save Log Entry</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- LOGISTICS DISPATCH MODAL (WITH SEARCH FILTER) -->
+    <div id="modal-add-dispatch" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4 z-50">
+        <div class="bg-white border border-slate-200 rounded-lg w-full max-w-md p-6 space-y-4 shadow-xl">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+                <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-slate-700">local_shipping</span> Record Dispatch Event
+                </h3>
+                <button onclick="toggleModal('modal-add-dispatch', false)" class="text-slate-400 hover:text-slate-600 font-bold text-lg cursor-pointer">×</button>
+            </div>
+            <form id="form-dispatch" onsubmit="executeDispatchSubmission(event)" class="space-y-3.5 text-xs">
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1 font-code">Dispatch ID *</label>
+                    <input type="text" id="in-d-id" required class="w-full bg-slate-50 border border-slate-200 rounded p-2 text-slate-900 font-code outline-none font-bold" placeholder="e.g. DISP-7001">
+                </div>
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1">Equipment Asset *</label>
+                    <div class="relative mb-1">
+                        <input type="text" id="in-d-search-asset" oninput="filterDropdownSearch('in-d-search-asset', 'in-d-asset')" placeholder="Type to filter equipment list below..." class="w-full bg-slate-100 border border-slate-300 rounded p-1.5 text-slate-800 text-[11px] focus:outline-none focus:border-slate-500">
+                    </div>
+                    <select id="in-d-asset" required class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 font-code focus:outline-none focus:border-slate-900"></select>
+                </div>
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1">Event Type Designation *</label>
+                    <select id="in-d-type" class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:outline-none focus:border-slate-900">
+                        <option value="Dispatch Out">Mobilize Outbound to Project Field</option>
+                        <option value="Return In">De-mobilize Return Inbound to Workshop Base</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1">Target Destination / Allocation Project *</label>
+                    <input type="text" id="in-d-destination" required class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:outline-none focus:border-slate-900" placeholder="e.g. Aba Saleel Industrial Zone Project">
+                </div>
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1">Event Date Stamp *</label>
+                    <input type="date" id="in-d-date" required class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:outline-none focus:border-slate-900">
+                </div>
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="toggleModal('modal-add-dispatch', false)" class="bg-slate-100 text-slate-700 border border-slate-200 px-3 py-2 rounded font-medium cursor-pointer">Cancel</button>
+                    <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded font-bold cursor-pointer">Execute Dispatch Log</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TECHNICIAN PROFILE MODAL -->
+    <div id="modal-add-tech" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4 z-50">
+        <div class="bg-white border border-slate-200 rounded-lg w-full max-w-md p-6 space-y-4 shadow-xl">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+                <h3 id="modal-tech-title" class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-slate-700">person_add</span> Onboard Technician Profile
+                </h3>
+                <button onclick="toggleModal('modal-add-tech', false)" class="text-slate-400 hover:text-slate-600 font-bold text-lg cursor-pointer">×</button>
+            </div>
+            <form id="form-tech" onsubmit="executeTechSubmission(event)" class="space-y-3.5 text-xs">
+                <input type="hidden" id="in-t-mode" value="create">
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1 font-code">Technician ID *</label>
+                    <input type="text" id="in-t-id" required class="w-full bg-slate-50 border border-slate-200 rounded p-2 text-slate-900 font-code outline-none font-bold focus:border-slate-900" placeholder="e.g. TECH-01">
+                </div>
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1">Full Name *</label>
+                    <input type="text" id="in-t-name" required class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:outline-none focus:border-slate-900" placeholder="e.g. Danilo Ramos">
+                </div>
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1">Engineering Designation *</label>
+                    <input type="text" id="in-t-designation" required class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:outline-none focus:border-slate-900" placeholder="e.g. Senior Plant Mechanic">
+                </div>
+                <div>
+                    <label class="block text-slate-600 font-medium mb-1">Contact Info / Radio Channel</label>
+                    <input type="text" id="in-t-contact" class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 font-code focus:outline-none focus:border-slate-900" placeholder="e.g. +974 5581 9283">
+                </div>
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="toggleModal('modal-add-tech', false)" class="bg-slate-100 text-slate-700 border border-slate-200 px-3 py-2 rounded font-medium cursor-pointer">Cancel</button>
+                    <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded font-bold cursor-pointer">Save Credentials</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- AUTHORIZATION SECURITY LAYER ---
+        const currentUserRole = 'viewer'; // Roles: 'viewer' (Read-Only) or 'admin' (Full Control)
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCS6OIQ6wFFKDRcq-SFGCLP2aVq6faq5fo",
+            authDomain: "cmms-e5cce.firebaseapp.com",
+            databaseURL: "https://cmms-e5cce-default-rtdb.firebaseio.com",
+            projectId: "cmms-e5cce",
+            storageBucket: "cmms-e5cce.firebasestorage.app",
+            messagingSenderId: "143521296047",
+            appId: "1:143521296047:web:3f6b2b46d025ec32f36e5a"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let memory = {
+            assets: [],
+            workOrders: [],
+            maintenanceLogs: [],
+            dispatches: [],
+            technicians: []
+        };
+
+        let currentActiveModule = "fleet";
+
+        window.initDataPipeline = function() {
+            // Apply structural role interface adjustments
+            enforceAuthorizationPolicy();
+
+            db.ref('.info/connected').on('value', (snap) => {
+                const badge = document.getElementById('connection-badge');
+                if (snap.val() === true) {
+                    badge.className = "text-xs text-emerald-600 font-medium flex items-center";
+                    badge.innerHTML = `<span class="h-2 w-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>Firebase Terminal Live`;
+                } else {
+                    badge.className = "text-xs text-rose-600 font-medium flex items-center";
+                    badge.innerHTML = `<span class="h-2 w-2 rounded-full bg-rose-500 mr-2 animate-pulse"></span>Offline / Reconnecting`;
+                }
             });
-            if (!response.ok) throw new Error(`HTTP status processing fault: ${response.status}`);
 
-            const result = await response.json();
-            const parsed = result.record || {};
+            db.ref('assets').on('value', (snapshot) => {
+                const data = snapshot.val();
+                memory.assets = [];
+                if (data) {
+                    Object.keys(data).forEach(id => {
+                        memory.assets.push({ id, ...data[id] });
+                    });
+                }
+                updateDashboardTopCounters();
+                refreshWorkspaceView();
+            });
+
+            db.ref('workOrders').on('value', (snapshot) => {
+                const data = snapshot.val();
+                memory.workOrders = [];
+                if (data) {
+                    Object.keys(data).forEach(id => {
+                        memory.workOrders.push({ id, ...data[id] });
+                    });
+                }
+                updateDashboardTopCounters();
+                refreshWorkspaceView();
+            });
+
+            db.ref('maintenanceLogs').on('value', (snapshot) => {
+                const data = snapshot.val();
+                memory.maintenanceLogs = [];
+                if (data) {
+                    Object.keys(data).forEach(id => {
+                        memory.maintenanceLogs.push({ id, ...data[id] });
+                    });
+                }
+                updateDashboardTopCounters();
+                refreshWorkspaceView();
+            });
+
+            db.ref('dispatches').on('value', (snapshot) => {
+                const data = snapshot.val();
+                memory.dispatches = [];
+                if (data) {
+                    Object.keys(data).forEach(id => {
+                        memory.dispatches.push({ id, ...data[id] });
+                    });
+                }
+                updateDashboardTopCounters();
+                refreshWorkspaceView();
+            });
+
+            db.ref('technicians').on('value', (snapshot) => {
+                const data = snapshot.val();
+                memory.technicians = [];
+                if (data) {
+                    Object.keys(data).forEach(id => {
+                        memory.technicians.push({ id, ...data[id] });
+                    });
+                }
+                updateDashboardTopCounters();
+                refreshWorkspaceView();
+            });
+        };
+
+        function enforceAuthorizationPolicy() {
+            const roleBadge = document.getElementById('role-badge');
+            if (currentUserRole === 'viewer') {
+                roleBadge.className = "text-[10px] font-code font-bold uppercase px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 inline-block";
+                roleBadge.innerText = "Role: Read-Only Viewer";
+
+                // Hide top level dynamic registration buttons
+                const createButtons = [
+                    'btn-action-add-fleet', 'btn-action-add-wo', 
+                    'btn-action-add-log', 'btn-action-add-dispatch', 'btn-action-add-tech'
+                ];
+                createButtons.forEach(btnId => {
+                    const el = document.getElementById(btnId);
+                    if (el) el.style.display = 'none';
+                });
+
+                // Hide the Action header columns inside table elements
+                document.querySelectorAll('.th-actions-col').forEach(th => {
+                    th.style.display = 'none';
+                });
+            } else {
+                roleBadge.className = "text-[10px] font-code font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 inline-block";
+                roleBadge.innerText = "Role: Administrator";
+            }
+        }
+
+        function checkWritePermission() {
+            if (currentUserRole === 'viewer') {
+                alert("Access Denied: Your account is configured with Read-Only status privileges. You are not authorized to create, update, or clear items.");
+                return false;
+            }
+            return true;
+        }
+
+        function updateDashboardTopCounters() {
+            document.getElementById('stat-fleet-count').innerText = memory.assets.length;
+            document.getElementById('stat-wo-count').innerText = memory.workOrders.length;
+            document.getElementById('stat-log-count').innerText = memory.maintenanceLogs.length;
+            document.getElementById('stat-dispatch-count').innerText = memory.dispatches.length;
+            document.getElementById('stat-tech-count').innerText = memory.technicians.length;
+        }
+
+        function setModule(moduleCode) {
+            currentActiveModule = moduleCode;
+            document.querySelectorAll('.pane-view').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.mod-tab').forEach(t => {
+                t.classList.remove('bg-slate-900', 'text-white', 'shadow-xs');
+                t.classList.add('text-slate-600', 'hover:bg-slate-50', 'hover:text-slate-900');
+            });
+
+            const targetPane = document.getElementById(`pane-${moduleCode}`);
+            if (targetPane) targetPane.classList.remove('hidden');
+
+            const targetTab = document.getElementById(`tab-${moduleCode}`);
+            if (targetTab) {
+                targetTab.classList.remove('text-slate-600', 'hover:bg-slate-50', 'hover:text-slate-900');
+                targetTab.classList.add('bg-slate-900', 'text-white', 'shadow-xs');
+            }
+            refreshWorkspaceView();
+        }
+
+        function toggleModal(modalId, displayState) {
+            const el = document.getElementById(modalId);
+            if (!el) return;
+            if (displayState) {
+                el.classList.remove('hidden');
+                el.classList.add('flex');
+            } else {
+                el.classList.remove('flex');
+                el.classList.add('hidden');
+            }
+        }
+
+        function toggleMetricInputs(type) {
+            if (type === 'hours') {
+                document.getElementById('wrapper-hours-inputs').classList.remove('hidden');
+                document.getElementById('wrapper-date-inputs').classList.add('hidden');
+            } else if (type === 'date') {
+                document.getElementById('wrapper-hours-inputs').classList.add('hidden');
+                document.getElementById('wrapper-date-inputs').classList.remove('hidden');
+            } else {
+                document.getElementById('wrapper-hours-inputs').classList.add('hidden');
+                document.getElementById('wrapper-date-inputs').classList.add('hidden');
+            }
+        }
+
+        function filterDropdownSearch(inputId, selectId) {
+            const filterVal = document.getElementById(inputId).value.toLowerCase();
+            const selectEl = document.getElementById(selectId);
+            const options = selectEl.options;
             
-            databaseState = {
-                master_assets_registry: parsed.master_assets_registry || {},
-                global_status_store: parsed.global_status_store || {},
-                historical_logs_store: parsed.historical_logs_store || {},
-                movement_logs_store: parsed.movement_logs_store || {}
+            for (let i = 0; i < options.length; i++) {
+                const txt = options[i].text.toLowerCase();
+                if (txt.includes(filterVal)) {
+                    options[i].style.display = "";
+                } else {
+                    options[i].style.display = "none";
+                }
+            }
+        }
+
+        // --- MASTER FLEET ---
+        function openAddModal() {
+            if(!checkWritePermission()) return;
+            document.getElementById('form-fleet').reset();
+            document.getElementById('in-f-mode').value = "create";
+            document.getElementById('in-f-id').disabled = false;
+            document.getElementById('modal-title').innerHTML = `<span class="material-symbols-outlined text-slate-700">playlist_add</span> Register Asset Specifications`;
+            toggleModal('modal-add-fleet', true);
+        }
+
+        function openEditModal(assetId) {
+            if(!checkWritePermission()) return;
+            const asset = memory.assets.find(a => a.id === assetId);
+            if (!asset) return;
+            document.getElementById('in-f-mode').value = "edit";
+            document.getElementById('in-f-old-id').value = asset.id;
+            document.getElementById('in-f-id').value = asset.id;
+            document.getElementById('in-f-id').disabled = true;
+            document.getElementById('in-f-model').value = asset.model || "";
+            document.getElementById('in-f-description').value = asset.description || "";
+            document.getElementById('in-f-serial').value = asset.serial || "";
+            document.getElementById('in-f-location').value = asset.location || "WORKSHOP";
+            document.getElementById('in-f-status').value = asset.status || "Operational";
+            
+            document.getElementById('modal-title').innerHTML = `<span class="material-symbols-outlined text-slate-700">edit_note</span> Modify Asset Specs [${asset.id}]`;
+            toggleModal('modal-add-fleet', true);
+        }
+
+        function executeFleetSubmission(e) {
+            e.preventDefault();
+            if(!checkWritePermission()) return;
+            const id = document.getElementById('in-f-id').value.trim().toUpperCase();
+            const payload = {
+                model: document.getElementById('in-f-model').value.trim().toUpperCase(),
+                description: document.getElementById('in-f-description').value.trim(),
+                serial: document.getElementById('in-f-serial').value.trim().toUpperCase(),
+                location: document.getElementById('in-f-location').value.trim().toUpperCase() || "WORKSHOP",
+                status: document.getElementById('in-f-status').value
             };
 
-            isConnected = true;
-            updateStatusBanner("Data downloaded cleanly from server cloud platform storage safely.");
-            refreshSystemDashboardView();
-        } catch (err) {
-            console.error(err);
-            updateStatusBanner(`Could not download operational roster. Details: ${err.message}`, true);
-        }
-    }
-
-    async function autoSaveToDisk() {
-        if (!isConnected) return;
-        updateStatusBanner("Syncing changes with cloud pipeline container...");
-        try {
-            const response = await fetch(API_URL, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Master-Key': MASTER_KEY
-                },
-                body: JSON.stringify(databaseState)
-            });
-            if (!response.ok) throw new Error(`Server write pipeline failure status: ${response.status}`);
-            updateStatusBanner("Data saved and pushed successfully to your live JSONbin cloud state registry.");
-        } catch (err) {
-            console.error("Auto-save sync payload to cloud failed:", err);
-            updateStatusBanner(`Auto-save update stream processing failed: ${err.message}`, true);
-        }
-    }
-
-    async function renderMasterRegistryTable() {
-        const tbody = document.getElementById('equipmentTableBody');
-        tbody.innerHTML = '';
-        const registry = databaseState.master_assets_registry || {};
-        const keys = Object.keys(registry);
-
-        if (keys.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#94a3b8; padding: 24px;">No assets registered. Click "Add New Entry" to get started.</td></tr>`;
-            return;
+            db.ref('assets/' + id).update(payload).then(() => {
+                toggleModal('modal-add-fleet', false);
+            }).catch(err => alert("Error writing to Firebase: " + err.message));
         }
 
-        let itemIndex = 1;
-        for (const id of keys) {
-            const savedStatus = databaseState.global_status_store[id] || 'Operational';
-            let badgeClass = 'badge-operational';
-            let rowHighlightClass = '';
+        function dropAssetSpec(assetId) {
+            if(!checkWritePermission()) return;
+            if (confirm(`Are you absolutely sure you want to purge hardware asset asset validation specs for ID: ${assetId}?`)) {
+                db.ref('assets/' + assetId).remove();
+            }
+        }
 
-            if (savedStatus === 'Under Maintenance') badgeClass = 'badge-maintenance';
-            if (savedStatus === 'Down') badgeClass = 'badge-down';
+        // --- WORK ORDERS ---
+        function openAddWoModal() {
+            if(!checkWritePermission()) return;
+            document.getElementById('form-wo').reset();
+            document.getElementById('in-w-mode').value = "create";
             
-            if (savedStatus === 'Requested OUT') {
-                badgeClass = 'badge-requested-out';
-                rowHighlightClass = 'request-pending-out';
+            let nextNum = 1001;
+            if (memory.workOrders && memory.workOrders.length > 0) {
+                memory.workOrders.forEach(w => {
+                    let num = parseInt(w.id.replace('WO-', ''));
+                    if (!isNaN(num) && num >= nextNum) {
+                        nextNum = num + 1;
+                    }
+                });
             }
-
-            const tr = document.createElement('tr');
-            tr.className = `clickable ${id === activeEquipmentId ? 'selected' : ''} ${rowHighlightClass}`;
-            tr.onclick = () => selectEquipment(id);
             
-            tr.innerHTML = `
-                <td style="color: var(--text-muted); font-weight: 600;">${itemIndex++}</td>
-                <td><strong>${id}</strong></td>
-                <td>${registry[id].name || 'Industrial Asset'}</td>
-                <td>${registry[id].model || '-'}</td>
-                <td><code style="font-size:12px; background:#f1f5f9; padding:2px 6px; border-radius:4px;">${registry[id].serial || '-'}</code></td>
-                <td>${registry[id].location || '-'}</td>
-                <td><span class="badge ${badgeClass}">${savedStatus}</span></td>
-            `;
-            tbody.appendChild(tr);
-        }
-        filterFleetRegistry();
-    }
-
-    function filterFleetRegistry() {
-        const query = document.getElementById('fleetSearchInput').value.toLowerCase().trim();
-        const rows = document.querySelectorAll('#equipmentTableBody tr');
-
-        let dynamicIndex = 1;
-        rows.forEach(row => {
-            if(row.cells.length < 7) return;
-            const assetId = row.cells[1]?.innerText.toLowerCase() || '';
-            const assetName = row.cells[2]?.innerText.toLowerCase() || '';
-            const assetModel = row.cells[3]?.innerText.toLowerCase() || '';
-            const assetSerial = row.cells[4]?.innerText.toLowerCase() || '';
-            const assetLocation = row.cells[5]?.innerText.toLowerCase() || '';
-
-            if (assetId.includes(query) || assetName.includes(query) || assetModel.includes(query) || assetSerial.includes(query) || assetLocation.includes(query)) {
-                row.style.display = ""; 
-                row.cells[0].innerText = dynamicIndex++;
-            } else {
-                row.style.display = "none"; 
-            }
-        });
-    }
-
-    async function selectEquipment(id) {
-        if (!id || !databaseState.master_assets_registry[id]) return;
-        
-        activeEquipmentId = id;
-        await renderMasterRegistryTable();
-        cancelLogEditing();
-
-        const currentStatus = databaseState.global_status_store[id] || 'Operational';
-        const currentAsset = databaseState.master_assets_registry[id];
-
-        document.querySelectorAll('.activeIdHeader').forEach(el => el.innerText = id);
-        document.querySelectorAll('.ledgerIdHeader').forEach(el => el.innerText = id);
-        document.querySelectorAll('.reportIdHeader').forEach(el => el.innerText = id);
-        
-        document.querySelectorAll('.summaryName').forEach(el => el.innerText = currentAsset.name || 'Industrial Asset');
-        document.querySelectorAll('.summaryModel').forEach(el => el.innerText = currentAsset.model || '-');
-        document.querySelectorAll('.summarySerial').forEach(el => el.innerText = currentAsset.serial || '-');
-        document.querySelectorAll('.summaryLocation').forEach(el => el.innerText = currentAsset.location || '-');
-        document.querySelectorAll('.summaryStatus').forEach(el => el.innerText = currentStatus);
-
-        document.getElementById('equipmentStatusSelect').value = currentStatus;
-
-        await renderHistoryLedger();
-        await renderMovementLedger();
-    }
-
-    async function unlockNavigationControls() {
-        const inputPassword = prompt("🔑 Enter override protection key to reveal panel navigation and dispatch buttons:");
-        if (inputPassword === null) return;
-
-        const evaluatedHash = await hashInputText(inputPassword);
-        if (true) {
-            document.getElementById('dispatchRequestBtn').classList.remove('hidden-on-screen');
-            document.getElementById('goToMaintenanceBtn').classList.remove('hidden-on-screen');
-            document.getElementById('goToMovementBtn').classList.remove('hidden-on-screen');
-            document.getElementById('unlockNavControlsBtn').style.display = 'none';
-            alert("🔓 Verification Successful. Restricted navigation controls are now visible.");
-        } else {
-            alert("❌ Security Exception: Incorrect validation password.");
-        }
-    }
-
-    async function requestEquipmentOut() {
-        if (!activeEquipmentId || !databaseState.master_assets_registry[activeEquipmentId]) {
-            alert('Please select an active equipment row from the registry table list first.');
-            return;
+            document.getElementById('in-w-id').value = "WO-" + nextNum;
+            document.getElementById('in-w-id').disabled = true; 
+            document.getElementById('in-w-search-asset').value = "";
+            populateEquipmentDropdown('in-w-asset');
+            toggleMetricInputs('hours');
+            document.getElementById('modal-wo-title').innerHTML = `<span class="material-symbols-outlined text-slate-700">playlist_add</span> Create Maintenance Work Order`;
+            toggleModal('modal-add-wo', true);
         }
 
-        const currentStatus = databaseState.global_status_store[activeEquipmentId] || 'Operational';
+        function openEditWoModal(woId) {
+            if(!checkWritePermission()) return;
+            const wo = memory.workOrders.find(w => w.id === woId);
+            if (!wo) return;
+            document.getElementById('in-w-mode').value = "edit";
+            document.getElementById('in-w-old-id').value = wo.id;
+            document.getElementById('in-w-id').value = wo.id;
+            document.getElementById('in-w-id').disabled = true;
+            document.getElementById('in-w-search-asset').value = "";
+            populateEquipmentDropdown('in-w-asset', wo.assetId);
+            document.getElementById('in-w-type').value = wo.type;
+            toggleMetricInputs(wo.type);
 
-        if (currentStatus === 'Under Maintenance' || currentStatus === 'Down') {
-            alert(`❌ Dispatch Denied: Asset "${activeEquipmentId}" is currently marked as "${currentStatus}" and cannot be deployed.`);
-            return;
-        }
-
-        if (currentStatus === 'Requested OUT') {
-            if (!confirm(`❌ Revert dispatch request for "${activeEquipmentId}"? Click OK to return to standard Operational status.`)) {
-                return;
+            if (wo.type === 'hours') {
+                document.getElementById('in-w-current-hours').value = wo.currentHours || 0;
+                document.getElementById('in-w-target-hours').value = wo.targetHours || 0;
+            } else if (wo.type === 'date') {
+                document.getElementById('in-w-current-date').value = wo.currentDate || "";
+                document.getElementById('in-w-target-date').value = wo.targetDate || "";
             }
 
-            const now = new Date();
-            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-            const timestamp = now.toISOString().slice(0, 16);
+            document.getElementById('in-w-status').value = wo.status;
+            document.getElementById('modal-wo-title').innerHTML = `<span class="material-symbols-outlined text-slate-700">edit_note</span> Modify Work Order [${wo.id}]`;
+            toggleModal('modal-add-wo', true);
+        }
 
-            const cancelPacket = {
-                type: 'In',
-                dateTime: timestamp,
-                location: 'WORKSHOP', 
-                notes: 'Dispatch Request Cancelled. Asset state reverted back to normal Operational status.'
+        function populateEquipmentDropdown(targetSelectId, selectedValue = "") {
+            const selectEl = document.getElementById(targetSelectId);
+            if (!selectEl) return;
+            let html = memory.assets.map(a => `<option value="${a.id}">${a.id} - ${a.model} (${a.status})</option>`).join('');
+            selectEl.innerHTML = html || `<option value="">No equipment available</option>`;
+            if (selectedValue) selectEl.value = selectedValue;
+        }
+
+        function executeWoSubmission(e) {
+            e.preventDefault();
+            if(!checkWritePermission()) return;
+            const id = document.getElementById('in-w-id').value.trim().toUpperCase();
+            const type = document.getElementById('in-w-type').value;
+            
+            const payload = {
+                assetId: document.getElementById('in-w-asset').value,
+                type: type,
+                status: document.getElementById('in-w-status').value,
+                currentHours: type === 'hours' ? parseInt(document.getElementById('in-w-current-hours').value) || 0 : "",
+                targetHours: type === 'hours' ? parseInt(document.getElementById('in-w-target-hours').value) || 0 : "",
+                currentDate: type === 'date' ? document.getElementById('in-w-current-date').value : "",
+                targetDate: type === 'date' ? document.getElementById('in-w-target-date').value : ""
             };
 
-            if (!databaseState.movement_logs_store[activeEquipmentId]) {
-                databaseState.movement_logs_store[activeEquipmentId] = [];
+            db.ref('workOrders/' + id).update(payload).then(() => {
+                toggleModal('modal-add-wo', false);
+            });
+        }
+
+        function dropWorkOrder(woId) {
+            if(!checkWritePermission()) return;
+            if (confirm(`Delete Work Order Frame ${woId}?`)) {
+                db.ref('workOrders/' + woId).remove();
             }
-
-            databaseState.movement_logs_store[activeEquipmentId].push(cancelPacket);
-            databaseState.global_status_store[activeEquipmentId] = 'Operational';
-            databaseState.master_assets_registry[activeEquipmentId].location = 'WORKSHOP';
-
-            await selectEquipment(activeEquipmentId);
-            await autoSaveToDisk();
-            return;
         }
 
-        const sitePrompt = prompt(`📤 Enter Target Site / Project Destination to request deployment for asset "${activeEquipmentId}":`);
-        if (sitePrompt === null) return; 
-        const targetSite = sitePrompt.trim() || 'Pending Destination Allocation';
-
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        const timestamp = now.toISOString().slice(0, 16);
-
-        const requestPacket = {
-            type: 'Out',
-            dateTime: timestamp,
-            location: 'Requested OUT',
-            notes: `Automated Dispatch Request generated. Assigned target location destination field value: ${targetSite}.`
-        };
-
-        if (!databaseState.movement_logs_store[activeEquipmentId]) {
-            databaseState.movement_logs_store[activeEquipmentId] = [];
-        }
-
-        databaseState.movement_logs_store[activeEquipmentId].push(requestPacket);
-        databaseState.global_status_store[activeEquipmentId] = 'Requested OUT';
-        databaseState.master_assets_registry[activeEquipmentId].location = 'Requested OUT';
-
-        await selectEquipment(activeEquipmentId);
-        await autoSaveToDisk();
-    }
-
-    function openFleetModal(mode) {
-        if (!isAdmin) { alert('Access Denied: Requires Administrator Privileges.'); return; }
-        const modal = document.getElementById('fleetModal');
-        const title = document.getElementById('modalTitle');
-        document.getElementById('modalMode').value = mode;
-
-        if (mode === 'add') {
-            title.innerText = "➕ Add New Equipment Entry";
-            document.getElementById('modalAssetId').value = '';
-            document.getElementById('modalAssetId').disabled = false;
-            document.getElementById('modalAssetName').value = '';
-            document.getElementById('modalAssetModel').value = '';
-            document.getElementById('modalAssetSerial').value = '';
-            document.getElementById('modalAssetLocation').value = '';
-        } else if (mode === 'edit') {
-            if (!activeEquipmentId || !databaseState.master_assets_registry[activeEquipmentId]) {
-                alert('Please select an active machine row from the registry table list first.');
-                return;
-            }
-            title.innerText = `✏️ Edit Equipment Parameters (${activeEquipmentId})`;
-            document.getElementById('modalAssetId').value = activeEquipmentId;
-            document.getElementById('modalAssetId').disabled = true;
-            document.getElementById('modalAssetName').value = databaseState.master_assets_registry[activeEquipmentId].name || '';
-            document.getElementById('modalAssetModel').value = databaseState.master_assets_registry[activeEquipmentId].model || '';
-            document.getElementById('modalAssetSerial').value = databaseState.master_assets_registry[activeEquipmentId].serial || '';
-            document.getElementById('modalAssetLocation').value = databaseState.master_assets_registry[activeEquipmentId].location || '';
-        }
-        modal.style.display = 'block';
-    }
-
-    function closeFleetModal() {
-        document.getElementById('fleetModal').style.display = 'none';
-    }
-
-    async function submitFleetForm() {
-        if (!isAdmin) { alert('Access Denied: Requires Administrator Privileges.'); return; }
-        const mode = document.getElementById('modalMode').value;
-        const id = document.getElementById('modalAssetId').value.trim().toUpperCase();
-        const name = document.getElementById('modalAssetName').value.trim();
-        const modelNo = document.getElementById('modalAssetModel').value.trim();
-        const serial = document.getElementById('modalAssetSerial').value.trim();
-        const locationStr = document.getElementById('modalAssetLocation').value.trim();
-
-        if (!id || !name || !modelNo || !serial) {
-            alert('Identity registration fields (ID, Name, Model, and Serial) are required.');
-            return;
-        }
-
-        if (mode === 'add') {
-            if (databaseState.master_assets_registry[id]) {
-                alert(`Error: Equipment ID reference "${id}" is already assigned to an asset.`);
-                return;
-            }
-            databaseState.master_assets_registry[id] = { name: name, model: modelNo, serial: serial, location: locationStr || '-' };
-            databaseState.global_status_store[id] = 'Operational';
-        } else if (mode === 'edit') {
-            databaseState.master_assets_registry[id].name = name;
-            databaseState.master_assets_registry[id].model = modelNo;
-            databaseState.master_assets_registry[id].serial = serial;
-            databaseState.master_assets_registry[id].location = locationStr || '-';
-        }
-
-        closeFleetModal();
-        await selectEquipment(id);
-        await autoSaveToDisk(); 
-    }
-
-    async function deleteEquipment() {
-        if (!isAdmin) { alert('Access Denied: Requires Administrator Privileges.'); return; }
-        if (!activeEquipmentId || !databaseState.master_assets_registry[activeEquipmentId]) {
-            alert('Select an active machine row from the registry table database list first.');
-            return;
-        }
-
-        if (confirm(`⚠️ Warning! Permanently delete Asset "${activeEquipmentId}"?`)) {
-            delete databaseState.global_status_store[activeEquipmentId];
-            delete databaseState.historical_logs_store[activeEquipmentId];
-            delete databaseState.movement_logs_store[activeEquipmentId];
-            delete databaseState.master_assets_registry[activeEquipmentId];
+        // --- SERVICE HISTORY / LOGS ---
+        function openAddLogModal() {
+            if(!checkWritePermission()) return;
+            document.getElementById('form-log').reset();
+            document.getElementById('in-l-mode').value = "create";
             
-            activeEquipmentId = '';
-            refreshSystemDashboardView();
-            showRegistryView();
-            await autoSaveToDisk(); 
-        }
-    }
-
-    async function clearMainDashboardDisplay() {
-        activeEquipmentId = '';
-        document.querySelectorAll('.activeIdHeader, .ledgerIdHeader, .reportIdHeader, .summaryName, .summaryModel, .summarySerial, .summaryLocation, .summaryStatus').forEach(el => el.innerText = '-');
-        document.getElementById('historyTableBody').innerHTML = `<tr><td colspan="10" style="text-align:center; color:#94a3b8; padding: 24px;">No historical logs found.</td></tr>`;
-        document.getElementById('movementTableBody').innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding: 24px;">No configuration movement tracked.</td></tr>`;
-        generateHistoricalReport([]);
-    }
-
-    function updateLiveStatusField() {
-        const selectedStatus = document.getElementById('equipmentStatusSelect').value;
-        document.querySelectorAll('.summaryStatus').forEach(el => el.innerText = selectedStatus);
-    }
-
-    function generateActionsFromChecklist() {
-        const checks = {
-            "Fluid Levels Check": document.getElementById('pmFluids').checked,
-            "Filters/Separators Maintenance": document.getElementById('pmFilters').checked,
-            "Hose/Seals/Belt Integrity Review": document.getElementById('pmBelts').checked,
-            "Structural Fastener Torque Verification": document.getElementById('pmTorque').checked,
-            "Gauge Calibration Certification": document.getElementById('pmGauges').checked
-        };
-
-        let performedActions = [];
-        for (const [task, completed] of Object.entries(checks)) {
-            if (completed) performedActions.push(task);
-        }
-
-        if (performedActions.length > 0) {
-            document.getElementById('serviceAction').value = "Completed regular preventive routines: " + performedActions.join(', ') + ".";
-        } else {
-            document.getElementById('serviceAction').value = "";
-        }
-    }
-
-    async function renderHistoryLedger() {
-        const bodyContainer = document.getElementById('historyTableBody');
-        bodyContainer.innerHTML = '';
-        if (!activeEquipmentId) return;
-
-        const records = databaseState.historical_logs_store[activeEquipmentId] || [];
-        if (records.length === 0) {
-            bodyContainer.innerHTML = `<tr><td colspan="10" style="text-align:center; color:#94a3b8; padding: 24px;">No historical maintenance records.</td></tr>`;
-            generateHistoricalReport([]);
-            return;
-        }
-
-        records.forEach((item, index) => {
-            let badgeClass = 'badge-operational';
-            if (item.status === 'Under Maintenance') badgeClass = 'badge-maintenance';
-            if (item.status === 'Down') badgeClass = 'badge-down';
-            if (item.status === 'Requested OUT') badgeClass = 'badge-requested-out';
-
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${item.date}</td>
-                <td><strong>${item.currentHours || '0.0'} hrs</strong></td>
-                <td>${item.targetMaintenanceHours || '0.0'} hrs</td>
-                <td><span class="badge ${badgeClass}">${item.status || 'Operational'}</span></td>
-                <td><small>${item.faultReport || '-'}</small></td>
-                <td><small>${item.serviceAction || '-'}</small></td>
-                <td><small>${item.partsReplaced || '-'}</small></td>
-                <td>${item.technician}</td>
-                <td><small>${item.remarks || '-'}</small></td>
-                <td style="text-align:center;">
-                    <button class="btn btn-warning btn-sm admin-only" onclick="editLogRecord(${index})">✏️ Edit</button>
-                    <button class="btn btn-danger btn-sm admin-only" onclick="deleteLogRecord(${index})">🗑️ Delete</button>
-                    ${!isAdmin ? '<span style="color:var(--text-muted); font-size:12px;">Admin Only</span>' : ''}
-                </td>
-            `;
-            bodyContainer.appendChild(tr);
-        });
-        generateHistoricalReport(records);
-    }
-
-    async function renderMovementLedger() {
-        const bodyContainer = document.getElementById('movementTableBody');
-        bodyContainer.innerHTML = '';
-        if (!activeEquipmentId) return;
-
-        const movements = databaseState.movement_logs_store[activeEquipmentId] || [];
-        if (movements.length === 0) {
-            bodyContainer.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding: 24px;">No spatial deployment transfers found.</td></tr>`;
-            return;
-        }
-
-        movements.forEach((move, index) => {
-            const badgeClass = move.type === 'In' ? 'badge-move-in' : 'badge-move-out';
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${move.dateTime.replace('T', ' ')}</td>
-                <td><span class="badge ${badgeClass}">EQUIPMENT ${move.type.toUpperCase()}</span></td>
-                <td><strong>${move.location}</strong></td>
-                <td><small>${move.notes || '-'}</small></td>
-                <td style="text-align:center;">
-                    <button class="btn btn-danger btn-sm admin-only" onclick="deleteMovementRecord(${index})">🗑️ Delete</button>
-                    ${!isAdmin ? '<span style="color:var(--text-muted); font-size:12px;">Admin Only</span>' : ''}
-                </td>
-            `;
-            bodyContainer.appendChild(tr);
-        });
-    }
-
-    function generateHistoricalReport(records) {
-        const totalEventsEl = document.getElementById('statTotalEvents');
-        const maxHoursEl = document.getElementById('statMaxHours');
-        const avgIntervalEl = document.getElementById('statAvgInterval');
-
-        if (!activeEquipmentId || records.length === 0) {
-            totalEventsEl.innerText = "0";
-            maxHoursEl.innerText = "0.0 hrs";
-            avgIntervalEl.innerText = "0.0 hrs";
-            return;
-        }
-
-        let maxHours = 0;
-        let sumIntervals = 0;
-        let validIntervalCount = 0;
-
-        records.forEach(record => {
-            const currentHrs = parseFloat(record.currentHours) || 0;
-            const targetHrs = parseFloat(record.targetMaintenanceHours) || 0;
-            if (currentHrs > maxHours) maxHours = currentHrs;
-            if (targetHrs > currentHrs) {
-                sumIntervals += (targetHrs - currentHrs);
-                validIntervalCount++;
+            let nextNum = 1003;
+            if (memory.maintenanceLogs && memory.maintenanceLogs.length > 0) {
+                memory.maintenanceLogs.forEach(l => {
+                    let num = parseInt(l.id.replace('LOG-', ''));
+                    if (!isNaN(num) && num >= nextNum) {
+                        nextNum = num + 1;
+                    }
+                });
             }
-        });
-
-        const averageInterval = validIntervalCount > 0 ? (sumIntervals / validIntervalCount) : 0;
-        totalEventsEl.innerText = records.length;
-        maxHoursEl.innerText = `${maxHours.toFixed(1)} hrs`;
-        avgIntervalEl.innerText = `${averageInterval.toFixed(1)} hrs`;
-    }
-
-    async function saveLog(event) {
-        event.preventDefault();
-        const currentHoursNum = parseFloat(document.getElementById('currentHours').value) || 0;
-        const targetHoursNum = parseFloat(document.getElementById('targetMaintenanceHours').value) || 0;
-        let selectedStatusValue = document.getElementById('equipmentStatusSelect').value;
-
-        if (currentHoursNum >= targetHoursNum) {
-            selectedStatusValue = 'Under Maintenance';
-            alert(`⚠️ Automated Warning: Threshold triggered. Enforcing status change to 'Under Maintenance'.`);
+            
+            document.getElementById('in-l-id').value = "MN-" + nextNum;
+            document.getElementById('in-l-id').disabled = true; 
+            document.getElementById('in-l-date').value = new Date().toISOString().split('T')[0]; 
+            populateLogModalDropdowns();
+            document.getElementById('modal-log-title').innerHTML = `<span class="material-symbols-outlined text-slate-700">history_edu</span> Log Maintenance Execution`;
+            toggleModal('modal-add-log', true);
         }
 
-        const logDataPacket = {
-            date: document.getElementById('logDate').value,
-            status: selectedStatusValue,
-            currentHours: currentHoursNum.toFixed(1),
-            targetMaintenanceHours: targetHoursNum.toFixed(1),
-            faultReport: document.getElementById('faultReport').value,
-            serviceAction: document.getElementById('serviceAction').value,
-            partsReplaced: document.getElementById('partsReplaced').value,
-            technician: document.getElementById('technician').value,
-            remarks: document.getElementById('remarks').value,
-            checklist: {
-                fluids: document.getElementById('pmFluids').checked,
-                filters: document.getElementById('pmFilters').checked,
-                belts: document.getElementById('pmBelts').checked,
-                torque: document.getElementById('pmTorque').checked,
-                gauges: document.getElementById('pmGauges').checked
+        function openEditLogModal(logId) {
+            if(!checkWritePermission()) return;
+            const log = memory.maintenanceLogs.find(l => l.id === logId);
+            if (!log) return;
+            
+            document.getElementById('in-l-mode').value = "edit";
+            document.getElementById('in-l-id').value = log.id;
+            document.getElementById('in-l-id').disabled = true;
+            document.getElementById('in-l-date').value = log.date || "";
+            
+            const woSelect = document.getElementById('in-l-wo');
+            let htmlOptions = '<option value="STANDALONE">Standalone Direct Log Entry (No Active Order)</option>';
+            memory.workOrders.forEach(w => {
+                htmlOptions += `<option value="${w.id}">${w.id} -> Asset ${w.assetId}</option>`;
+            });
+            woSelect.innerHTML = htmlOptions;
+            woSelect.value = log.woIdRef || "STANDALONE";
+
+            const techSelect = document.getElementById('in-l-tech');
+            techSelect.innerHTML = memory.technicians.map(t => `<option value="${t.name}">${t.name} [${t.id}]</option>`).join('') || '<option value="Unassigned">No Onboarded Technicians</option>';
+            techSelect.value = log.technician || "";
+
+            document.getElementById('in-l-current').value = log.currentMetric || "";
+            document.getElementById('in-l-current-target').value = log.targetMetric || "";
+            document.getElementById('in-l-remaining').value = log.remainingHours || "";
+            document.getElementById('in-l-fault').value = log.fault || "";
+            document.getElementById('in-l-action').value = log.action || "";
+            document.getElementById('in-l-parts').value = log.parts || "";
+            document.getElementById('in-l-status').value = log.status || "Operational";
+            document.getElementById('in-l-remarks').value = log.remarks || "";
+
+            document.getElementById('modal-log-title').innerHTML = `<span class="material-symbols-outlined text-slate-700">edit_note</span> Edit Maintenance Log [${log.id}]`;
+            toggleModal('modal-add-log', true);
+        }
+
+        function populateLogModalDropdowns() {
+            const woSelect = document.getElementById('in-l-wo');
+            const openOrders = memory.workOrders.filter(w => w.status !== "Completed" && w.status !== "Cancelled");
+            let htmlOptions = '<option value="STANDALONE">Standalone Direct Log Entry (No Active Order)</option>';
+            openOrders.forEach(w => {
+                htmlOptions += `<option value="${w.id}">${w.id} -> Asset ${w.assetId}</option>`;
+            });
+            woSelect.innerHTML = htmlOptions;
+
+            const techSelect = document.getElementById('in-l-tech');
+            techSelect.innerHTML = memory.technicians.map(t => `<option value="${t.name}">${t.name} [${t.id}]</option>`).join('') || '<option value="Unassigned">No Onboarded Technicians</option>';
+            syncMetricsFromWorkOrder(woSelect.value);
+        }
+
+        function syncMetricsFromWorkOrder(woId) {
+            if (document.getElementById('in-l-mode').value === "edit") return; 
+            if (!woId || woId === "STANDALONE") {
+                document.getElementById('in-l-current').value = 'Manual Entry';
+                document.getElementById('in-l-current-target').value = 'Manual Entry';
+                document.getElementById('in-l-remaining').value = 'Manual Entry';
+                return;
             }
-        };
+            const targetWo = memory.workOrders.find(w => w.id === woId);
+            if (!targetWo) return;
 
-        if (!databaseState.historical_logs_store[activeEquipmentId]) {
-            databaseState.historical_logs_store[activeEquipmentId] = [];
-        }
-
-        let currentRecordsList = databaseState.historical_logs_store[activeEquipmentId];
-        const editIndex = parseInt(document.getElementById('editingLogIndex').value);
-
-        if (editIndex > -1) {
-            if (!isAdmin) { alert('Access Denied: Requires Administrator Privileges.'); return; }
-            currentRecordsList[editIndex] = logDataPacket;
-        } else {
-            currentRecordsList.push(logDataPacket);
-        }
-
-        databaseState.global_status_store[activeEquipmentId] = selectedStatusValue;
-        cancelLogEditing();
-        await selectEquipment(activeEquipmentId);
-        await autoSaveToDisk(); 
-    }
-
-    async function saveMovementLog(event) {
-        event.preventDefault();
-        if (!activeEquipmentId) return;
-
-        const targetLocation = document.getElementById('moveLocation').value.trim();
-        const movementPacket = {
-            type: document.getElementById('moveType').value,
-            dateTime: document.getElementById('moveDateTime').value,
-            location: targetLocation,
-            notes: document.getElementById('moveNotes').value.trim()
-        };
-
-        if (!databaseState.movement_logs_store[activeEquipmentId]) {
-            databaseState.movement_logs_store[activeEquipmentId] = [];
-        }
-
-        databaseState.movement_logs_store[activeEquipmentId].push(movementPacket);
-        databaseState.master_assets_registry[activeEquipmentId].location = targetLocation;
-        
-        if (databaseState.global_status_store[activeEquipmentId] === 'Requested OUT') {
-            databaseState.global_status_store[activeEquipmentId] = 'Operational';
-        }
-
-        document.getElementById('movementForm').reset();
-        setMovementDateTimeNow();
-        await selectEquipment(activeEquipmentId);
-        await autoSaveToDisk();
-    }
-
-    async function editLogRecord(index) {
-        if (!isAdmin) { alert('Access Denied: Requires Administrator Privileges.'); return; }
-        const records = databaseState.historical_logs_store[activeEquipmentId] || [];
-        const targetedRecord = records[index];
-        if (!targetedRecord) return;
-
-        document.getElementById('editingLogIndex').value = index;
-        document.getElementById('logDate').value = targetedRecord.date;
-        document.getElementById('equipmentStatusSelect').value = targetedRecord.status;
-        document.getElementById('currentHours').value = targetedRecord.currentHours;
-        document.getElementById('targetMaintenanceHours').value = targetedRecord.targetMaintenanceHours;
-        document.getElementById('faultReport').value = targetedRecord.faultReport;
-        document.getElementById('serviceAction').value = targetedRecord.serviceAction;
-        document.getElementById('partsReplaced').value = targetedRecord.partsReplaced;
-        document.getElementById('technician').value = targetedRecord.technician;
-        document.getElementById('remarks').value = targetedRecord.remarks;
-
-        if (targetedRecord.checklist) {
-            document.getElementById('pmFluids').checked = targetedRecord.checklist.fluids || false;
-            document.getElementById('pmFilters').checked = targetedRecord.checklist.filters || false;
-            document.getElementById('pmBelts').checked = targetedRecord.checklist.belts || false;
-            document.getElementById('pmTorque').checked = targetedRecord.checklist.torque || false;
-            document.getElementById('pmGauges').checked = targetedRecord.checklist.gauges || false;
-        } else {
-            resetCheckboxes();
-        }
-
-        document.getElementById('formSubmitBtn').innerText = "Confirm Update Log Details";
-        document.getElementById('formSubmitBtn').className = "btn btn-warning";
-        document.getElementById('cancelEditBtn').style.display = "inline-flex";
-
-        updateLiveStatusField();
-        document.getElementById('logDate').focus();
-    }
-
-    function resetCheckboxes() {
-        document.getElementById('pmFluids').checked = false;
-        document.getElementById('pmFilters').checked = false;
-        document.getElementById('pmBelts').checked = false;
-        document.getElementById('pmTorque').checked = false;
-        document.getElementById('pmGauges').checked = false;
-    }
-
-    async function cancelLogEditing() {
-        document.getElementById('editingLogIndex').value = "-1";
-        document.getElementById('maintenanceForm').reset();
-        resetCheckboxes();
-        document.getElementById('logDate').valueAsDate = new Date();
-
-        document.getElementById('formSubmitBtn').innerText = "Save Entry & Update Status";
-        document.getElementById('formSubmitBtn').className = "btn btn-success";
-        document.getElementById('cancelEditBtn').style.display = "none";
-
-        if (activeEquipmentId && databaseState.master_assets_registry[activeEquipmentId]) {
-            const curStatus = databaseState.global_status_store[activeEquipmentId] || 'Operational';
-            document.getElementById('equipmentStatusSelect').value = curStatus;
-            updateLiveStatusField();
-        }
-    }
-
-    async function deleteLogRecord(index) {
-        if (!isAdmin) { alert('Access Denied: Requires Administrator Privileges.'); return; }
-        let records = databaseState.historical_logs_store[activeEquipmentId] || [];
-        if (confirm("Delete this log timeline data row?")) {
-            records.splice(index, 1);
-            let newStatus = 'Operational';
-            if (records.length > 0) newStatus = records[records.length - 1].status;
-
-            databaseState.global_status_store[activeEquipmentId] = newStatus;
-            await selectEquipment(activeEquipmentId);
-            await autoSaveToDisk(); 
-        }
-    }
-
-    async function deleteMovementRecord(index) {
-        if (!isAdmin) { alert('Access Denied: Requires Administrator Privileges.'); return; }
-        let movements = databaseState.movement_logs_store[activeEquipmentId] || [];
-        if (confirm("Delete this physical transfer movement line row permanently?")) {
-            movements.splice(index, 1);
-            if (movements.length > 0) {
-                databaseState.master_assets_registry[activeEquipmentId].location = movements[movements.length - 1].location;
+            if (targetWo.type === 'hours') {
+                document.getElementById('in-l-current').value = `${targetWo.currentHours} Hrs`;
+                document.getElementById('in-l-current-target').value = `${targetWo.targetHours} Hrs`;
+                document.getElementById('in-l-remaining').value = `${targetWo.targetHours - targetWo.currentHours} Hrs`;
+            } else if (targetWo.type === 'date') {
+                document.getElementById('in-l-current').value = targetWo.currentDate;
+                document.getElementById('in-l-current-target').value = targetWo.targetDate;
+                document.getElementById('in-l-remaining').value = 'Calendar Block';
             } else {
-                databaseState.master_assets_registry[activeEquipmentId].location = "-";
+                document.getElementById('in-l-current').value = 'N/A';
+                document.getElementById('in-l-current-target').value = 'N/A';
+                document.getElementById('in-l-remaining').value = 'N/A';
             }
-            await selectEquipment(activeEquipmentId);
-            await autoSaveToDisk();
         }
-    }
 
-    async function exportCSV() {
-        const records = databaseState.historical_logs_store[activeEquipmentId] || [];
-        if (records.length === 0) return;
+        function executeLogSubmission(e) {
+            e.preventDefault();
+            if(!checkWritePermission()) return;
+            const id = document.getElementById('in-l-id').value.trim().toUpperCase();
+            const woRef = document.getElementById('in-l-wo').value;
+            const assetStatus = document.getElementById('in-l-status').value;
 
-        let csvString = `ID Number:,${activeEquipmentId}\nEquipment Name:,${databaseState.master_assets_registry[activeEquipmentId].name}\nModel No:,${databaseState.master_assets_registry[activeEquipmentId].model}\nSerial Number:,${databaseState.master_assets_registry[activeEquipmentId].serial}\nLocation:,${databaseState.master_assets_registry[activeEquipmentId].location}\n\n`;
-        csvString += `Date,Current Hours Reading,Target Hour Maintenance,Status Logged,Inspection Fault Report,Service Performed/Action Taken,Parts Replaced,Technician,Remarks\n`;
+            let targetAssetId = "STANDALONE";
+            if (woRef !== "STANDALONE") {
+                const matchedWo = memory.workOrders.find(w => w.id === woRef);
+                if (matchedWo) {
+                    targetAssetId = matchedWo.assetId;
+                    if (assetStatus === "Operational") {
+                        db.ref('workOrders/' + woRef).update({ status: "Completed" });
+                    }
+                }
+            } else {
+                targetAssetId = memory.assets.length > 0 ? memory.assets[0].id : "UNKNOWN";
+            }
 
-        records.forEach(r => {
-            csvString += `"${r.date}","${r.currentHours}","${r.targetMaintenanceHours}","${r.status}","${r.faultReport}","${r.serviceAction}","${r.partsReplaced}","${r.technician}","${r.remarks}"\n`;
-        });
+            const payload = {
+                date: document.getElementById('in-l-date').value,
+                woIdRef: woRef,
+                assetId: targetAssetId,
+                currentMetric: document.getElementById('in-l-current').value,
+                targetMetric: document.getElementById('in-l-current-target').value,
+                remainingHours: document.getElementById('in-l-remaining').value,
+                fault: document.getElementById('in-l-fault').value.trim(),
+                action: document.getElementById('in-l-action').value.trim(),
+                parts: document.getElementById('in-l-parts').value.trim() || "None",
+                technician: document.getElementById('in-l-tech').value,
+                status: assetStatus,
+                remarks: document.getElementById('in-l-remarks').value.trim() || "None"
+            };
 
-        downloadCSVFile(csvString, `Maint_Log_${activeEquipmentId}.csv`);
-    }
-
-    function exportMovementCSV() {
-        const movements = databaseState.movement_logs_store[activeEquipmentId] || [];
-        if (movements.length === 0) return;
-
-        let csvString = `ID Number:,${activeEquipmentId}\nAsset Description:,${databaseState.master_assets_registry[activeEquipmentId].name}\nSerial No:,${databaseState.master_assets_registry[activeEquipmentId].serial}\n\n`;
-        csvString += `Date and Time,Movement Type,Target Site Location,Purpose Notes\n`;
-
-        movements.forEach(m => {
-            csvString += `"${m.dateTime.replace('T',' ')}","EQUIPMENT ${m.type.toUpperCase()}","${m.location}","${m.notes}"\n`;
-        });
-
-        downloadCSVFile(csvString, `Movement_Log_${activeEquipmentId}.csv`);
-    }
-
-    function downloadCSVFile(csvString, filename) {
-        const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.setAttribute("download", filename);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    function triggerRegistryPrint() {
-        const registryKeys = Object.keys(databaseState.master_assets_registry || {});
-        if (registryKeys.length === 0) {
-            alert("The master registry contains no data entries to print.");
-            return;
+            db.ref('maintenanceLogs/' + id).update(payload).then(() => {
+                if (targetAssetId !== "UNKNOWN" && targetAssetId !== "STANDALONE") {
+                    db.ref('assets/' + targetAssetId).update({ status: assetStatus });
+                }
+                toggleModal('modal-add-log', false);
+            });
         }
-        document.getElementById('printRegistryDate').innerText = new Date().toLocaleString();
-        document.body.classList.remove('printing-ledger');
-        document.body.classList.add('printing-registry');
-        window.print();
-    }
 
-    async function triggerLedgerPrint() {
-        const records = databaseState.historical_logs_store[activeEquipmentId || ''] || [];
-        if (records.length === 0) {
-            alert("The history ledger contains no logbook data row items to send to the printer engine.");
-            return;
+        function dropLogEntry(logId) {
+            if(!checkWritePermission()) return;
+            if (confirm(`Purge technical ledger sheet record: ${logId}?`)) {
+                db.ref('maintenanceLogs/' + logId).remove();
+            }
         }
-        document.body.classList.remove('printing-registry');
-        document.body.classList.add('printing-ledger');
-        window.print();
-    }
 
-    window.onafterprint = function() {
-        document.body.classList.remove('printing-registry', 'printing-ledger');
-        
-        document.getElementById('dispatchRequestBtn').classList.add('hidden-on-screen');
-        document.getElementById('goToMaintenanceBtn').classList.add('hidden-on-screen');
-        document.getElementById('goToMovementBtn').classList.add('hidden-on-screen');
-        document.getElementById('unlockNavControlsBtn').style.display = 'inline-flex';
-    };
-</script>
+        function printMaintenanceLog(logId) {
+            const log = memory.maintenanceLogs.find(l => l.id === logId);
+            if (!log) return;
+            const assetInfo = memory.assets.find(a => a.id === log.assetId) || {};
+            
+            const pSec = document.getElementById('print-section');
+            pSec.innerHTML = `
+                <div style="font-family: 'Inter', sans-serif; color: #1e293b; max-width: 850px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-b: 2px solid #0f172a; padding-bottom: 16px; margin-bottom: 24px;">
+                        <div>
+                            <h1 style="font-size: 20px; font-weight: 800; color: #0f172a; margin: 0; text-transform: uppercase; letter-spacing: -0.5px;">Al Ghaith Trading & Industrial Services</h1>
+                            <p style="font-size: 12px; color: #64748b; margin: 2px 0 0 0;">Technical Mechanical Maintenance & Services Division</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; background-color: #f1f5f9; padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 4px; color: #0f172a;">
+                                SERVICE RECORD LEDGER
+                            </span>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-cols: 2; grid-template-columns: 1fr 1fr; gap: 16px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 16px; margin-bottom: 24px; font-size: 12px;">
+                        <div>
+                            <p style="margin: 4px 0;"><strong style="color: #475569;">Log Certification ID:</strong> <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${log.id}</span></p>
+                            <p style="margin: 4px 0;"><strong style="color: #475569;">Execution Timestamp:</strong> ${log.date}</p>
+                            <p style="margin: 4px 0;"><strong style="color: #475569;">Reference Work Order:</strong> <span style="font-family: 'JetBrains Mono', monospace;">${log.woIdRef || 'N/A'}</span></p>
+                        </div>
+                        <div>
+                            <p style="margin: 4px 0;"><strong style="color: #475569;">Assigned Asset ID:</strong> <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${log.assetId}</span></p>
+                            <p style="margin: 4px 0;"><strong style="color: #475569;">Model Specification:</strong> ${assetInfo.model || 'N/A'}</p>
+                            <p style="margin: 4px 0;"><strong style="color: #475569;">Serial Index Number:</strong> ${assetInfo.serial || 'N/A'}</p>
+                        </div>
+                    </div>
+
+                    <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 11px; margin-bottom: 24px; border: 1px solid #e2e8f0;">
+                        <thead>
+                            <tr style="background-color: #f1f5f9; text-transform: uppercase; color: #475569; font-weight: 700; border-bottom: 1px solid #cbd5e1;">
+                                <th style="padding: 10px; border-r: 1px solid #e2e8f0;">Initial Log Metric</th>
+                                <th style="padding: 10px; border-r: 1px solid #e2e8f0;">Target Limit Threshold</th>
+                                <th style="padding: 10px; border-r: 1px solid #e2e8f0;">Remaining Operating Delta</th>
+                                <th style="padding: 10px;">Post-Service Operational Status</th>
+                            </tr>
+                        </thead>
+                        <tbody style="font-family: 'JetBrains Mono', monospace; font-weight: 500; color: #334155;">
+                            <tr>
+                                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; border-r: 1px solid #e2e8f0;">${log.currentMetric}</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; border-r: 1px solid #e2e8f0;">${log.targetMetric}</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; border-r: 1px solid #e2e8f0; color: #b45309; font-weight: 700;">${log.remainingHours}</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-weight: 700; color: #059669;">${log.status}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="font-size: 12px; space-y: 16px; display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px;">
+                        <div style="border-left: 3px solid #f43f5e; padding-left: 12px;">
+                            <h4 style="margin: 0 0 4px 0; text-transform: uppercase; font-size: 11px; color: #e11d48; letter-spacing: 0.5px;">I. Defective Fault Analysis &amp; Inspection Observations</h4>
+                            <p style="margin: 0; color: #334155; line-height: 1.5; white-space: pre-wrap;">${log.fault}</p>
+                        </div>
+                        
+                        <div style="border-left: 3px solid #10b981; padding-left: 12px;">
+                            <h4 style="margin: 0 0 4px 0; text-transform: uppercase; font-size: 11px; color: #059669; letter-spacing: 0.5px;">II. Corrective Technical Intervention Executed</h4>
+                            <p style="margin: 0; color: #334155; line-height: 1.5; white-space: pre-wrap;">${log.action}</p>
+                        </div>
+
+                        <div style="border-left: 3px solid #64748b; padding-left: 12px;">
+                            <h4 style="margin: 0 0 4px 0; text-transform: uppercase; font-size: 11px; color: #475569; letter-spacing: 0.5px;">III. Consumed Spare Engineering Components &amp; Consumables</h4>
+                            <p style="margin: 0; color: #334155; line-height: 1.5; font-family: 'JetBrains Mono', monospace;">${log.parts}</p>
+                        </div>
+
+                        <div style="border-left: 3px solid #cbd5e1; padding-left: 12px;">
+                            <h4 style="margin: 0 0 4px 0; text-transform: uppercase; font-size: 11px; color: #475569; letter-spacing: 0.5px;">IV. Advisory Remarks &amp; Future Scheduling Notes</h4>
+                            <p style="margin: 0; color: #64748b; line-height: 1.5;">${log.remarks || 'None'}</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 50px; padding-top: 16px; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; font-size: 12px;">
+                        <div>
+                            <p style="margin: 0; color: #64748b;">Responsible Plant Engineer / Technician:</p>
+                            <p style="margin: 16px 0 0 0; font-weight: 700; color: #0f172a;">${log.technician}</p>
+                            <div style="width: 200px; border-bottom: 1px solid #94a3b8; margin-top: 4px;"></div>
+                        </div>
+                        <div style="text-align: right;">
+                            <p style="margin: 0; color: #64748b;">Quality Assurance Authorization Sign-Off:</p>
+                            <p style="margin: 16px 0 0 0; font-weight: 500; color: #94a3b8; font-style: italic;">Workshop Operations Manager</p>
+                            <div style="width: 200px; border-bottom: 1px solid #94a3b8; margin-top: 4px; display: inline-block;"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            window.print();
+        }
+
+        // --- DISPATCH MANAGEMENT ---
+        function openAddDispatchModal() {
+            if(!checkWritePermission()) return;
+            document.getElementById('form-dispatch').reset();
+            
+            let nextNum = 1;
+            if (memory.dispatches && memory.dispatches.length > 0) {
+                memory.dispatches.forEach(d => {
+                    let num = parseInt(d.id.replace('DISP-', ''));
+                    if (!isNaN(num) && num >= nextNum) {
+                        nextNum = num + 1;
+                    }
+                });
+            }
+            
+            if (document.getElementById('in-d-id')) {
+                document.getElementById('in-d-id').value = "DISP-" + String(nextNum).padStart(3, '0');
+                document.getElementById('in-d-id').disabled = true; 
+            }
+            
+            document.getElementById('in-d-date').value = new Date().toISOString().split('T')[0];
+            populateEquipmentDropdown('in-d-asset');
+            toggleModal('modal-add-dispatch', true);
+        }
+
+        function executeDispatchSubmission(e) {
+            e.preventDefault();
+            if(!checkWritePermission()) return;
+            const id = document.getElementById('in-d-id').value.trim().toUpperCase();
+            const assetId = document.getElementById('in-d-asset').value;
+            const type = document.getElementById('in-d-type').value;
+            const dest = document.getElementById('in-d-destination').value.trim().toUpperCase();
+
+            const payload = {
+                assetId: assetId,
+                type: type,
+                destination: dest,
+                date: document.getElementById('in-d-date').value
+            };
+
+            db.ref('dispatches/' + id).set(payload).then(() => {
+                const nextStatus = (type === "Dispatch Out") ? "Dispatched" : "Operational";
+                db.ref('assets/' + assetId).update({ status: nextStatus, location: dest });
+                toggleModal('modal-add-dispatch', false);
+            });
+        }
+
+        function dropDispatchEvent(dispId) {
+            if(!checkWritePermission()) return;
+            if (confirm(`Remove logistical deployment framework file: ${dispId}?`)) {
+                db.ref('dispatches/' + dispId).remove();
+            }
+        }
+
+        // --- TECHNICIANS ---
+        function openAddTechModal() {
+            if(!checkWritePermission()) return;
+            document.getElementById('form-tech').reset();
+            document.getElementById('in-t-mode').value = "create";
+            
+            let nextNum = 1;
+            if (memory.technicians && memory.technicians.length > 0) {
+                memory.technicians.forEach(t => {
+                    let num = parseInt(t.id.replace('TECH-', ''));
+                    if (!isNaN(num) && num >= nextNum) {
+                        nextNum = num + 1;
+                    }
+                });
+            }
+            
+            document.getElementById('in-t-id').value = "TECH-" + String(nextNum).padStart(2, '0');
+            document.getElementById('in-t-id').disabled = true; 
+            document.getElementById('modal-tech-title').innerHTML = `<span class="material-symbols-outlined text-slate-700">person_add</span> Onboard Technician Profile`;
+            toggleModal('modal-add-tech', true);
+        }
+
+        function openEditTechModal(techId) {
+            if(!checkWritePermission()) return;
+            const tech = memory.technicians.find(t => t.id === techId);
+            if (!tech) return;
+            document.getElementById('in-t-mode').value = "edit";
+            document.getElementById('in-t-id').value = tech.id;
+            document.getElementById('in-t-id').disabled = true;
+            document.getElementById('in-t-name').value = tech.name || "";
+            document.getElementById('in-t-designation').value = tech.designation || "";
+            document.getElementById('in-t-contact').value = tech.contact || "";
+
+            document.getElementById('modal-tech-title').innerHTML = `<span class="material-symbols-outlined text-slate-700">edit_note</span> Edit Credentials [${tech.id}]`;
+            toggleModal('modal-add-tech', true);
+        }
+
+        function executeTechSubmission(e) {
+            e.preventDefault();
+            if(!checkWritePermission()) return;
+            const id = document.getElementById('in-t-id').value.trim().toUpperCase();
+            const payload = {
+                name: document.getElementById('in-t-name').value.trim(),
+                designation: document.getElementById('in-t-designation').value.trim(),
+                contact: document.getElementById('in-t-contact').value.trim() || "N/A"
+            };
+
+            db.ref('technicians/' + id).update(payload).then(() => {
+                toggleModal('modal-add-tech', false);
+            });
+        }
+
+        function dropTechnician(techId) {
+            if(!checkWritePermission()) return;
+            if (confirm(`Remove operational roster index for Engineer ID: ${techId}?`)) {
+                db.ref('technicians/' + techId).remove();
+            }
+        }
+
+        // --- RENDER REFRESH WORKSPACE ---
+        function refreshWorkspaceView() {
+            const query = document.getElementById('in-f-search').value.toLowerCase();
+            const isViewer = (currentUserRole === 'viewer');
+
+            if (currentActiveModule === "fleet") {
+                const container = document.getElementById('rows-fleet');
+                const filtered = memory.assets.filter(a => 
+                    a.id.toLowerCase().includes(query) || 
+                    a.model.toLowerCase().includes(query) || 
+                    a.description.toLowerCase().includes(query)
+                );
+
+                if (filtered.length === 0) {
+                    container.innerHTML = `<tr><td colspan="${isViewer ? 6 : 7}" class="p-8 text-center text-slate-400 font-medium">No assets registered match parameters.</td></tr>`;
+                    return;
+                }
+
+                container.innerHTML = filtered.map(asset => {
+                    let badgeClass = "bg-emerald-50 text-emerald-700 border border-emerald-200/60";
+                    if (asset.status === "In Maintenance") badgeClass = "bg-amber-50 text-amber-700 border border-amber-200/60";
+                    else if (asset.status === "Down") badgeClass = "bg-rose-50 text-rose-700 border border-rose-200/60";
+                    else if (asset.status === "Dispatched") badgeClass = "bg-blue-50 text-blue-700 border border-blue-200/60";
+                    else if (asset.status === "Standby") badgeClass = "bg-slate-100 text-slate-600 border border-slate-300";
+
+                    return `
+                        <tr class="hover:bg-slate-50/50 transition">
+                            <td class="p-4 font-code font-bold text-slate-900 tracking-wide select-all">${asset.id}</td>
+                            <td class="p-4 font-code font-medium text-slate-600">${asset.model}</td>
+                            <td class="p-4 font-medium text-slate-800">${asset.description}</td>
+                            <td class="p-4 text-slate-500 font-code">${asset.serial || 'N/A'}</td>
+                            <td class="p-4 text-slate-500 font-medium font-code">${asset.location || 'WORKSHOP'}</td>
+                            <td class="p-4"><span class="px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${badgeClass}">${asset.status || 'Operational'}</span></td>
+                            ${isViewer ? '' : `
+                            <td class="p-4 text-center space-x-2">
+                                <button onclick="openEditModal('${asset.id}')" class="text-slate-500 hover:text-slate-900 font-semibold transition cursor-pointer">Modify</button>
+                                <span class="text-slate-200">|</span>
+                                <button onclick="dropAssetSpec('${asset.id}')" class="text-rose-400 hover:text-rose-600 font-medium transition cursor-pointer">Purge</button>
+                            </td>`}
+                        </tr>
+                    `;
+                }).join('');
+
+            } else if (currentActiveModule === "wo") {
+                const containerWo = document.getElementById('rows-wo');
+                if (memory.workOrders.length === 0) {
+                    containerWo.innerHTML = `<tr><td colspan="${isViewer ? 6 : 7}" class="p-8 text-center text-slate-400 font-medium">No work orders recorded.</td></tr>`;
+                    return;
+                }
+
+                containerWo.innerHTML = memory.workOrders.map(w => {
+                    let metricCurrent = w.type === 'hours' ? `${w.currentHours} Hrs` : w.currentDate;
+                    let metricTarget = w.type === 'hours' ? `${w.targetHours} Hrs` : w.targetDate;
+                    let outputRemaining = w.type === 'hours' ? `${w.targetHours - w.currentHours} Hrs Remaining` : 'Calendar Baseline';
+                    
+                    let woBadgeClass = "bg-slate-100 text-slate-700 border border-slate-300";
+                    if (w.status === "Pending") woBadgeClass = "bg-amber-50 text-amber-700 border border-amber-200/60";
+                    else if (w.status === "In Progress") woBadgeClass = "bg-blue-50 text-blue-700 border border-blue-200/60";
+                    else if (w.status === "Check-up/Inspection") woBadgeClass = "bg-purple-50 text-purple-700 border border-purple-200/60";
+                    else if (w.status === "Completed") woBadgeClass = "bg-emerald-50 text-emerald-700 border border-emerald-200/60";
+                    else if (w.status === "Cancelled") woBadgeClass = "bg-rose-50 text-rose-700 border border-rose-200/60";
+
+                    return `
+                        <tr class="hover:bg-slate-50/50 transition">
+                            <td class="p-4 font-code font-bold text-slate-900">${w.id}</td>
+                            <td class="p-4 font-code font-medium text-slate-600">${w.assetId}</td>
+                            <td class="p-4 font-code text-slate-700">${metricCurrent}</td>
+                            <td class="p-4 font-code text-slate-700">${metricTarget}</td>
+                            <td class="p-4 font-medium text-slate-500">${outputRemaining}</td>
+                            <td class="p-4"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${woBadgeClass}">${w.status || 'Pending'}</span></td>
+                            ${isViewer ? '' : `
+                            <td class="p-4 text-center space-x-2">
+                                <button onclick="openEditWoModal('${w.id}')" class="text-slate-500 hover:text-slate-900 font-semibold transition cursor-pointer">Modify</button>
+                                <span class="text-slate-200">|</span>
+                                <button onclick="dropWorkOrder('${w.id}')" class="text-rose-500 hover:text-rose-700 font-medium transition cursor-pointer">Delete</button>
+                            </td>`}
+                        </tr>
+                    `;
+                }).join('');
+
+            } else if (currentActiveModule === "log") {
+                const containerLog = document.getElementById('rows-log');
+                if (memory.maintenanceLogs.length === 0) {
+                    containerLog.innerHTML = `<tr><td colspan="${isViewer ? 7 : 8}" class="p-8 text-center text-slate-400 font-medium">No services registered inside history logbook.</td></tr>`;
+                    return;
+                }
+
+                containerLog.innerHTML = memory.maintenanceLogs.map(l => `
+                    <tr class="hover:bg-slate-50/50 transition">
+                        <td class="p-4 font-code font-bold text-slate-900">${l.id}<br/><span class="text-[10px] text-slate-400 font-normal">${l.date}</span></td>
+                        <td class="p-4 font-code font-bold text-slate-600">${l.assetId}</td>
+                        <td class="p-4 font-code text-slate-500">${l.currentMetric} -> ${l.targetMetric}</td>
+                        <td class="p-4 font-code font-medium text-amber-700">${l.remainingHours}</td>
+                        <td class="p-4 font-medium"><strong class="text-rose-700">Fault:</strong> ${l.fault}<br/><strong class="text-emerald-700">Action:</strong> ${l.action}</td>
+                        <td class="p-4 text-slate-600 font-medium">${l.parts}<br/><span class="text-[10px] text-slate-400">Tech: ${l.technician}</span></td>
+                        <td class="p-4 font-bold text-slate-900 uppercase text-[10px]">${l.status}</td>
+                        ${isViewer ? `
+                        <td class="p-4 text-center">
+                            <button onclick="printMaintenanceLog('${l.id}')" class="text-slate-500 hover:text-slate-900 font-semibold transition cursor-pointer">Print Slip</button>
+                        </td>` : `
+                        <td class="p-4 text-center space-x-1.5">
+                            <button onclick="printMaintenanceLog('${l.id}')" class="text-slate-500 hover:text-slate-900 font-semibold transition cursor-pointer">Print Slip</button>
+                            <span class="text-slate-200">|</span>
+                            <button onclick="openEditLogModal('${l.id}')" class="text-blue-500 hover:text-blue-700 font-semibold transition cursor-pointer">Edit</button>
+                            <span class="text-slate-200">|</span>
+                            <button onclick="dropLogEntry('${l.id}')" class="text-rose-500 hover:text-rose-700 font-medium transition cursor-pointer">Delete</button>
+                        </td>`}
+                    </tr>
+                `).join('');
+
+            } else if (currentActiveModule === "dispatch") {
+                const containerDisp = document.getElementById('rows-dispatch');
+                if (memory.dispatches.length === 0) {
+                    containerDisp.innerHTML = `<tr><td colspan="${isViewer ? 5 : 6}" class="p-8 text-center text-slate-400 font-medium">No logistics tracking events verified.</td></tr>`;
+                    return;
+                }
+
+                containerDisp.innerHTML = memory.dispatches.map(d => `
+                    <tr class="hover:bg-slate-50/50 transition">
+                        <td class="p-4 font-code font-bold text-slate-900">${d.id}</td>
+                        <td class="p-4 font-code font-bold text-slate-600">${d.assetId}</td>
+                        <td class="p-4 font-semibold text-slate-700">${d.type}</td>
+                        <td class="p-4 font-medium text-slate-800 font-code">${d.destination}</td>
+                        <td class="p-4 text-slate-500 font-code">${d.date}</td>
+                        ${isViewer ? '' : `
+                        <td class="p-4 text-center">
+                            <button onclick="dropDispatchEvent('${d.id}')" class="text-rose-500 hover:text-rose-700 font-medium transition cursor-pointer">Purge</button>
+                        </td>`}
+                    </tr>
+                `).join('');
+
+            } else if (currentActiveModule === "tech") {
+                const containerTech = document.getElementById('rows-tech');
+                if (memory.technicians.length === 0) {
+                    containerTech.innerHTML = `<tr><td colspan="${isViewer ? 4 : 5}" class="p-8 text-center text-slate-400 font-medium"> Roster clean. Onboard engineers.</td></tr>`;
+                    return;
+                }
+
+                containerTech.innerHTML = memory.technicians.map(t => `
+                    <tr class="hover:bg-slate-50/50 transition">
+                        <td class="p-4 font-code font-bold text-slate-900">${t.id}</td>
+                        <td class="p-4 font-semibold text-slate-800">${t.name}</td>
+                        <td class="p-4 text-slate-600 font-medium">${t.designation}</td>
+                        <td class="p-4 text-slate-500 font-code">${t.contact}</td>
+                        ${isViewer ? '' : `
+                        <td class="p-4 text-center space-x-2">
+                            <button onclick="openEditTechModal('${t.id}')" class="text-slate-500 hover:text-slate-900 font-semibold transition cursor-pointer">Edit</button>
+                            <span class="text-slate-200">|</span>
+                            <button onclick="dropTechnician('${t.id}')" class="text-rose-500 hover:text-rose-700 font-medium transition cursor-pointer">De-board</button>
+                        </td>`}
+                    </tr>
+                `).join('');
+
+            } else if (currentActiveModule === "reports") {
+                let op = 0, maint = 0, down = 0, disp = 0, stby = 0;
+                let allocationHtml = '';
+
+                memory.assets.forEach(a => {
+                    if (a.status === "Operational") op++;
+                    else if (a.status === "In Maintenance") maint++;
+                    else if (a.status === "Down") down++;
+                    else if (a.status === "Dispatched") disp++;
+                    else if (a.status === "Standby") stby++;
+
+                    allocationHtml += `
+                        <tr class="border-b border-slate-100">
+                            <td class="p-3 font-code font-bold">${a.id}</td>
+                            <td class="p-3 font-code text-slate-500">${a.model}</td>
+                            <td class="p-3 text-slate-700 font-medium">${a.description}</td>
+                            <td class="p-3 font-bold text-xs uppercase">${a.status}</td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById('rep-stat-operational').innerText = op;
+                document.getElementById('rep-stat-maintenance').innerText = maint;
+                document.getElementById('rep-stat-down').innerText = down;
+                document.getElementById('rep-stat-dispatched').innerText = disp;
+                document.getElementById('rep-stat-standby').innerText = stby;
+                document.getElementById('rep-rows-allocation').innerHTML = allocationHtml || `<tr><td colspan="4" class="p-4 text-slate-400 text-center">No Assets available.</td></tr>`;
+            }
+        }
+
+        function printExecutiveReport() {
+            let op = 0, maint = 0, down = 0, disp = 0, stby = 0;
+            let tableRows = '';
+
+            memory.assets.forEach(a => {
+                if (a.status === "Operational") op++;
+                else if (a.status === "In Maintenance") maint++;
+                else if (a.status === "Down") down++;
+                else if (a.status === "Dispatched") disp++;
+                else if (a.status === "Standby") stby++;
+
+                tableRows += `
+                    <tr>
+                        <td style="padding: 6px; border-bottom: 1px solid #ddd;">${a.id}</td>
+                        <td style="padding: 6px; border-bottom: 1px solid #ddd;">${a.model}</td>
+                        <td style="padding: 6px; border-bottom: 1px solid #ddd;">${a.description}</td>
+                        <td style="padding: 6px; border-bottom: 1px solid #ddd;">${a.location || 'WORKSHOP'}</td>
+                        <td style="padding: 6px; border-bottom: 1px solid #ddd; font-weight:bold;">${a.status}</td>
+                    </tr>
+                `;
+            });
+
+            const printSec = document.getElementById('print-section');
+            printSec.innerHTML = `
+                <div style="font-family: 'Inter', sans-serif; padding: 10px;">
+                    <h2 style="text-transform: uppercase; letter-spacing: 1px; margin-bottom:5px;">Al Ghaith Trading & Industrial Services</h2>
+                    <h4 style="color: #555; margin-top:0;">Executive Fleet Diagnostics Status Sheet Report</h4>
+                    <p style="font-size: 11px; color:#777;">Generated on: ${new Date().toLocaleString()}</p>
+                    <hr style="border: 1px solid #222; margin: 15px 0;"/>
+                    
+                    <h3>Fleet Totals Overview Summary</h3>
+                    <ul style="list-style: none; padding-left: 0; font-size:13px; line-height:1.8;">
+                        <li><strong>Live Operational Assets:</strong> ${op}</li>
+                        <li><strong>In-Shop Active Maintenance:</strong> ${maint}</li>
+                        <li><strong>Down / Flagged:</strong> ${down}</li>
+                        <li><strong>Dispatched to Site Field:</strong> ${disp}</li>
+                        <li><strong>Standby Reserves:</strong> ${stby}</li>
+                    </ul>
+                    <h3 style="margin-top: 30px;">Complete Fleet Status Master Registry Listing</h3>
+                    <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 11px;">
+                        <thead>
+                            <tr style="background: #f2f2f2;">
+                                <th style="padding: 8px; border-bottom: 2px solid #000;">Asset ID</th>
+                                <th style="padding: 8px; border-bottom: 2px solid #000;">Model</th>
+                                <th style="padding: 8px; border-bottom: 2px solid #000;">Description</th>
+                                <th style="padding: 8px; border-bottom: 2px solid #000;">Location</th>
+                                <th style="padding: 8px; border-bottom: 2px solid #000;">Live Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>${tableRows || '<tr><td colspan="5">No operational data loaded.</td></tr>'}</tbody>
+                    </table>
+                </div>
+            `;
+            window.print();
+        }
+
+        window.onload = function() {
+            window.initDataPipeline();
+        };
+    </script>
 </body>
 </html>
